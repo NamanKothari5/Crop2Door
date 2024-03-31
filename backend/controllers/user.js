@@ -1,0 +1,46 @@
+const { TryCatch } = require("../middlewares/errorHandler");
+const { User } = require("../models/user");
+const CustomError = require("../utils/customError");
+
+module.exports.loginUser = TryCatch(async (req, res, next) => {
+    const { _id, name, email, gender, dob, role } = req.body;
+
+    let user = await User.findById(_id);
+
+    if (user && user.role !== role) {
+        return next(new CustomError("Incorrect credentials", 401));
+    }
+    else if (user && user.role === role) {
+        return res.status(200).json({
+            success: true,
+            message: `Welcome ${user.name}`
+        })
+    }
+    user = await User.create({ _id, name, email, gender, dob: new Date(dob), role });
+
+    res.status(200).json({
+        success: true,
+        message: `Welcome ${user.name}`
+    });
+});
+
+module.exports.getAllusers = TryCatch(async (req, res, next) => {
+    res.status(200).json({
+        success: true,
+        message: `I will give you all users`
+    });
+});
+
+module.exports.getUser = TryCatch(async (req, res, next) => {
+    const id = req.params.id;
+
+    const user = await User.findById(id);
+
+    if (!user)
+        return next(new CustomError("Invalid Id", 400));
+
+    return res.status(200).json({
+        success: true,
+        user
+    })
+})
