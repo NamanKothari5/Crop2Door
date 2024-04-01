@@ -8,4 +8,3 @@ module.exports.connectDB = (uri) => {
     }).catch((e) => console.log(e));
 };
 
-

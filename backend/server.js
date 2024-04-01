@@ -7,16 +7,19 @@ const cors = require('cors');
 const port=process.env.PORT || 4000;
 const mongoURI=process.env.MONGO_URI || "";
 
-const app=express();
+const app = express();
 app.use(express.json());
 app.use(cors());
 
-const userRoutes=require("./routes/user");
+const userRoutes = require("./routes/user");
+const productRoutes = require("./routes/product");
 const { connectDB } = require("./utils/features");
 const { errorHandler } = require("./middlewares/errorHandler");
 
-app.use("/api/user",userRoutes);
+app.use("/api/user", userRoutes);
+app.use("/api/product", productRoutes);
 
+app.use("/uploads", express.static("uploads"));
 app.use(errorHandler);
 connectDB(mongoURI);
 
