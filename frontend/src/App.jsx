@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import {
   BrowserRouter as Router,
   Route,
@@ -20,7 +20,35 @@ import UpdateProduct from './pages/admin/page/UpdateProduct';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Allproducts from './pages/allproducts/Allproducts';
+import LoginPage from './pages/loginPage';
+import { useDispatch, useSelector } from 'react-redux';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from './fireabase/FirebaseConfig';
+import { userExist, userNotExist } from './redux/reducer/userReducer';
+import { getUser } from './redux/api/userApi';
+
 function App() {
+  const { user, loading } = useSelector(
+    (state) =>
+      state.userReducer
+  );
+
+  const dispatch = useDispatch();
+  useEffect(() => {
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        
+        const data = await getUser(user.uid);
+        if (data.user)
+          dispatch(userExist(data.user));
+        else
+          dispatch(userNotExist());
+      }
+      else {
+        dispatch(userNotExist());
+      }
+    });
+  }, []);
   return (
     <MyState>
       <Router>
@@ -38,51 +66,53 @@ function App() {
               <Dashboard />
             </ProtectedRouteForAdmin>
           } />
-          <Route path='/login' element={<Login/>} />
-          <Route path='/signup' element={<Signup/>} />
-          <Route path='/productinfo/:id' element={<ProductInfo/>} />
+          <Route path='/login' element={<Login />} />
+          <Route path='/signup' element={<Signup />} />
+          <Route path='/productinfo/:id' element={<ProductInfo />} />
           <Route path='/addproduct' element={
             <ProtectedRouteForAdmin>
-              <AddProduct/>
+              <AddProduct />
             </ProtectedRouteForAdmin>
           } />
           <Route path='/updateproduct' element={
             <ProtectedRouteForAdmin>
-              <UpdateProduct/>
+              <UpdateProduct />
             </ProtectedRouteForAdmin>
           } />
           <Route path="/*" element={<NoPage />} />
+          <Route path="/newLogin" element={<LoginPage />} />
         </Routes>
-        <ToastContainer/>
+        <ToastContainer />
       </Router>
+
     </MyState>
 
   )
 }
 
-export default App 
+export default App
 
 // user 
 
-export const ProtectedRoute = ({children}) => {
+export const ProtectedRoute = ({ children }) => {
   const user = localStorage.getItem('user')
-  if(user){
+  if (user) {
     return children
-  }else{
-    return <Navigate to={'/login'}/>
+  } else {
+    return <Navigate to={'/login'} />
   }
 }
 
 // admin 
 
-const ProtectedRouteForAdmin = ({children})=> {
+const ProtectedRouteForAdmin = ({ children }) => {
   const admin = JSON.parse(localStorage.getItem('user'))
-  
-  if(admin.user.email === 'knupadhyay784@gmail.com'){
+
+  if (admin.user.email === 'naman@g.com') {
     return children
   }
-  else{
-    return <Navigate to={'/login'}/>
+  else {
+    return <Navigate to={'/login'} />
   }
 
 }

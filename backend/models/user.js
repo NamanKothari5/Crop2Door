@@ -1,14 +1,14 @@
-const mongoose=require("mongoose");
-const validator=require("validator");
+const mongoose = require("mongoose");
+const validator = require("validator");
 
-const schema=new mongoose.Schema({
-    _id:{
-        type:String,
-        required:[true,"Please enter ID"]
+const schema = new mongoose.Schema({
+    _id: {
+        type: String,
+        required: [true, "Please enter ID"]
     },
-    name:{
-        type:String,
-        required:[true,"Please enter Name"]
+    name: {
+        type: String,
+        required: [true, "Please enter Name"]
     },
     email: {
         type: String,
@@ -16,20 +16,34 @@ const schema=new mongoose.Schema({
         required: [true, "Please enter Name"],
         validate: validator.default.isEmail,
     },
-    gender: {
+    address: {
         type: String,
-        enum: ["male", "female"],
-        required: [true, "Please enter Gender"],
+        required: [true, "Please enter Address"],
     },
-    dob: {
-        type: Date,
-        required: [true, "Please enter Date of birth"],
+    pincode: {
+        type: Number,
+        required: [true, "Please enter pincode"]
+    },
+    coordinates: {
+        type: [String],
+        required: true
     },
     role: {
         type: String,
-        enum: ["admin", "customer","farmer"],
+        enum: ["admin", "customer", "farmer"],
         default: "customer",
-    }
+    },
+    farm: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Farm'
+    },
+    orders: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Order'
+        }
+    ]
 });
 
-module.exports.User=mongoose.model("User",schema);
+
+module.exports.User = mongoose.model("User", schema);

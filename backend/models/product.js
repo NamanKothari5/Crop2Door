@@ -11,33 +11,28 @@ const productSchema = mongoose.Schema({
     },
     photo: {
         type: String,
-        required: [true, "Please enter photo"]
     },
     stock: {
         type: Number,
         required: [true, "Please enter stock"]
-    },
-    address: {
-        type: String,
-        required: [true, "Please enter address"]
-    },
-    pincode: {
-        type: Number,
-        required: [true, "Please enter pincode"]
-    },
-    description: {
-        type: String
     },
     type: {
         type: String,
         enum: ["General", "Specialized"],
         required: [true, "Please enter product type"],
     },
+    description: {
+        type: String
+    },
     price: {
         type: Number,
     },
     certifications: {
         type: String
+    },
+    farm: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Farm'
     }
 });
 
