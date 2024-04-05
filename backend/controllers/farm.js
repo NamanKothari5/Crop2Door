@@ -39,6 +39,18 @@ module.exports.getSingleFarm=TryCatch(async (req,res,next)=>{
     });
 })
 
+module.exports.getAllFarms=TryCatch(async (req,res,next)=>{
+    const farms = await Farm.find({});
+
+    if(!farms)
+    return next(new CustomError("Farms Not Found", 404));
+    
+    return res.status(200).json({
+        success: true,
+        farms
+    });
+})
+
 module.exports.deleteFarm = TryCatch(async (req, res, next) => {
     const id = req.params.id;
     const farm = await Farm.findById(id);
