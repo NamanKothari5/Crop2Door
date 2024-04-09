@@ -12,15 +12,14 @@ import Cart from './pages/cart/Cart';
 import Dashboard from './pages/admin/dashboard/Dashboard';
 import NoPage from './pages/nopage/NoPage';
 import MyState from './context/data/myState';
-import Login from './pages/registration/Login';
-import Signup from './pages/registration/Signup';
+
 import ProductInfo from './pages/productInfo/ProductInfo';
 import AddProduct from './pages/admin/page/AddProduct';
 import UpdateProduct from './pages/admin/page/UpdateProduct';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Allproducts from './pages/allproducts/Allproducts';
-import LoginPage from './pages/loginPage';
+import Login from './pages/registration/Login';
 import { useDispatch, useSelector } from 'react-redux';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './fireabase/FirebaseConfig';
@@ -28,10 +27,6 @@ import { userExist, userNotExist } from './redux/reducer/userReducer';
 import { getUser } from './redux/api/userApi';
 
 function App() {
-  const { user, loading } = useSelector(
-    (state) =>
-      state.userReducer
-  );
 
   const dispatch = useDispatch();
   useEffect(() => {
@@ -67,7 +62,7 @@ function App() {
             </ProtectedRouteForAdmin>
           } />
           <Route path='/login' element={<Login />} />
-          <Route path='/signup' element={<Signup />} />
+          
           <Route path='/productinfo/:id' element={<ProductInfo />} />
           <Route path='/addproduct' element={
             <ProtectedRouteForAdmin>
@@ -80,7 +75,6 @@ function App() {
             </ProtectedRouteForAdmin>
           } />
           <Route path="/*" element={<NoPage />} />
-          <Route path="/newLogin" element={<LoginPage />} />
         </Routes>
         <ToastContainer />
       </Router>
@@ -90,12 +84,13 @@ function App() {
   )
 }
 
-export default App
-
 // user 
 
 export const ProtectedRoute = ({ children }) => {
-  const user = localStorage.getItem('user')
+  const { user, loading } = useSelector(
+    (state) =>
+      state.userReducer
+  );
   if (user) {
     return children
   } else {
@@ -106,13 +101,17 @@ export const ProtectedRoute = ({ children }) => {
 // admin 
 
 const ProtectedRouteForAdmin = ({ children }) => {
-  const admin = JSON.parse(localStorage.getItem('user'))
-
-  if (admin.user.email === 'naman@g.com') {
+  const { user, loading } = useSelector(
+    (state) =>
+      state.userReducer
+  );
+  if (user?.email === 'nrpatil_b20@it.vjti.ac.in') {
     return children
   }
   else {
     return <Navigate to={'/login'} />
   }
 
-}
+};
+
+export default App

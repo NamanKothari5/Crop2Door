@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import myContext from "../../../context/data/myContext";
 
 function AddProduct() {
@@ -16,9 +16,9 @@ function AddProduct() {
           <div>
             <input
               type="text"
-              value={products.title}
+              value={products.name}
               onChange={(e) =>
-                setProducts({ ...products, title: e.target.value })
+                setProducts({ ...products, name: e.target.value })
               }
               name="title"
               className=" bg-green-600 mb-4 px-2 py-2 w-full lg:w-[20em] rounded-lg text-white placeholder:text-green-200 outline-none"
@@ -27,7 +27,7 @@ function AddProduct() {
           </div>
           <div>
             <input
-              type="text"
+              type="number"
               value={products.price}
               onChange={(e) =>
                 setProducts({ ...products, price: e.target.value })
@@ -39,16 +39,28 @@ function AddProduct() {
           </div>
           <div>
             <input
-              type="text"
-              value={products.imageUrl}
+              type="number"
+              value={products.stock}
               onChange={(e) =>
-                setProducts({ ...products, imageUrl: e.target.value })
+                setProducts({ ...products, stock: e.target.value })
+              }
+              name="price"
+              className=" bg-green-600 mb-4 px-2 py-2 w-full lg:w-[20em] rounded-lg text-white placeholder:text-green-200 outline-none"
+              placeholder="Product stock"
+            />
+          </div>
+          {/* <div>
+            <input
+              type="file"
+              value={products.photo}
+              onChange={(e) =>
+                setProducts({ ...products, photo: e.target.files[0] })
               }
               name="imageurl"
               className=" bg-green-600 mb-4 px-2 py-2 w-full lg:w-[20em] rounded-lg text-white placeholder:text-green-200 outline-none"
-              placeholder="Product imageUrl"
+              placeholder="Product Photo"
             />
-          </div>
+          </div> */}
           <div>
             <input
               type="text"

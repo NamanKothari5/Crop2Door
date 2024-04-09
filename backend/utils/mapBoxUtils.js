@@ -1,9 +1,9 @@
+
 module.exports.getCoordinates = async (address, pincode) => {
   const baseURl = process.env.MAPBOX_BASE_URL;
   const token = process.env.MAPBOX_TOKEN;
   const response = await fetch(
-    `${baseURl}/geocoding/v5/mapbox.places/${
-      address + "," + pincode
+    `${baseURl}/geocoding/v5/mapbox.places/${address + "," + pincode
     }.json?limit=1&access_token=${token}`
   );
 
@@ -116,20 +116,7 @@ function popcount(num) {
 }
 
 module.exports.findCluster = (v, clusters) => {
-  // const n = 6;
-  // const v = Array.from({ length: n + 1 }, () => Array(n + 1).fill(0));
-  // v[0] = [0, 4, 1, 80, 82, 90, 31];
-  // v[1] = [3, 0, 5, 83, 85, 87, 32];
-  // v[2] = [4, 2, 0, 100, 95, 92, 35];
-  // v[3] = [83, 85, 97, 0, 5, 5, 60];
-  // v[4] = [87, 79, 97, 4, 0, 11, 57];
-  // v[5] = [91, 83, 90, 3, 9, 0, 63];
-  // v[6] = [30, 31, 35, 60, 62, 65, 0];
 
-  // const clusters = [
-  //     [6, 0, 1, 2],
-  //     [6, 3, 4, 5]
-  // ];
 
   let res = Infinity;
   let finalPath = [];

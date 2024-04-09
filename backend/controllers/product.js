@@ -7,60 +7,39 @@ const CustomError = require("../utils/customError");
 const fs = require("fs");
 
 module.exports.newProduct = TryCatch(async (req, res, next) => {
-    const { name, category, stock, description, type, price, userId } = req.body;
-    if (!type) {
-        return next(new CustomError("Please enter All Fields", 400));
-    }
+    const {id}=req.query;
+    const userId = id;
+    const { name, category, stock, description, price } = req.body;
+    
+    
+    // let photo = "";
+    // if(req.files.photo !== undefined)
+    //     photo = req.files.photo[0];
+    
+    // let certifications = "";
+    // if(req.files.certifications !== undefined)
+    //     certifications = req.files.certifications[0];
 
-    const photo = req.files.photo[0];
-    let certifications = "";
-    if (type == "Specialized") {
-        if (req.files.certifications === undefined)
-            return next(new CustomError("Please enter All Fields", 400));
-        else
-            certifications = req.files.certifications[0];
-    }
+    // if (!photo) return next(new CustomError("Please add Photo", 400));
 
-    if (!photo) return next(new CustomError("Please add Photo", 400));
-
-    if (!name || !category || !stock || !type || (type == "Specialized" && !price)) {
+    if (!name || !category || !stock || !price) {
         fs.rm(photo.path, () => {
             console.log("Deleted photo");
         });
-        fs.rm(certifications.path, () => {
-            console.log("Deleted certifications");
-        });
 
         return next(new CustomError("Please enter All Fields", 400));
     }
 
-    let newProduct = {};
     const user = await User.findById(userId);
+    let newProduct = new Product({
+        name,
+        category: category.toLowerCase(),
+        stock,
+        description,
+        price,
+        farm: user.farm
+    });
 
-    if (type == "General") {
-        newProduct = new Product({
-            name,
-            category: category.toLowerCase(),
-            stock,
-            type,
-            description,
-            photo: photo.path,
-            farm: user.farm
-        });
-    }
-    else if (type == "Specialized") {
-        newProduct = new Product({
-            name,
-            category: category.toLowerCase(),
-            stock,
-            type,
-            description,
-            price,
-            photo: photo.path,
-            certifications: certifications.path,
-            farm: user.farm
-        });
-    }
     await newProduct.save();
 
     const farm = await Farm.findById(user.farm);
@@ -106,12 +85,10 @@ module.exports.getAllProducts = TryCatch(async (req, res, next) => {
     const productPromises = validFarms.map(async (farm) => {
         for (const id of farm.products) {
             const product = await Product.findById(id);
-            if (product.type === "Specialized") {
-                if (product.name in products) {
-                    products[product.name].quantity += product.stock;
-                } else {
-                    products[product.name] = { quantity: product.stock };
-                }
+            if (product.name in products) {
+                products[product.name].quantity += product.stock;
+            } else {
+                products[product.name] = { quantity: product.stock };
             }
         }
     });
@@ -161,17 +138,15 @@ module.exports.updateProduct = TryCatch(async (req, res, next) => {
     const product = await Product.findById(id);
     if (!product) return next(new CustomError("Product Not Found", 404));
 
-    const { name, category, stock, description, type, price } = req.body;
+    const { name, category, stock, description, price } = req.body;
 
     if (name) product.name = name;
     if (category) product.category = category;
     if (stock) product.stock = stock;
-    if (type) product.type = type;
     if (description) product.description = description;
-    if (product.type == "Specialized" && price) product.price = price;
+    if (price) product.price = price;
 
     if (Object.keys(req.files).length >= 1) {
-        console.log(req.files);
         if (req.files.photo !== undefined) {
             const photo = req.files.photo[0];
             if (photo) {
@@ -179,18 +154,6 @@ module.exports.updateProduct = TryCatch(async (req, res, next) => {
                     console.log("Old Photo Deleted");
                 });
                 product.photo = photo.path;
-            }
-        }
-
-        if (product.type == "Specialized") {
-            if (req.files.certifications !== undefined) {
-                const certifications = req.files.certifications[0];
-                if (certifications) {
-                    fs.rm(product.certifications, () => {
-                        console.log("Old Certificate Deleted");
-                    });
-                    product.certifications = certifications.path;
-                }
             }
         }
     }

@@ -6,11 +6,16 @@ import { MdOutlineProductionQuantityLimits } from "react-icons/md";
 import { FaUser, FaCartPlus } from "react-icons/fa";
 import { AiFillShopping, AiFillPlusCircle, AiFillDelete } from "react-icons/ai";
 import { Link } from "react-router-dom";
-
+import { useSelector } from 'react-redux';
+import { useNavigate } from "react-router-dom";
 function DashboardTab() {
   const context = useContext(myContext);
-  const { mode, product, edithandle, deleteProduct, order, user } = context;
-
+  const { user, loading } = (
+    (state) =>
+      state.userReducer
+  );
+  const { mode, product, edithandle, deleteProduct, order } = context;
+  const navigate = useNavigate();
   // console.log(product)
   let [isOpen, setIsOpen] = useState(false);
 
@@ -23,7 +28,7 @@ function DashboardTab() {
   }
 
   const add = () => {
-    window.location.href = "/addproduct";
+    navigate("/addproduct");
   };
   return (
     <>
@@ -52,7 +57,7 @@ function DashboardTab() {
                   </div>
                 </button>
               </Tab>
-              <Tab>
+              {/* <Tab>
                 <button
                   type="button"
                   className="font-medium border-b-2 border-green-500 bg-[#605d5d12] text-green-500 rounded-lg text-xl  hover:shadow-green-700 shadow-[inset_0_0_8px_rgba(0,0,0,0.6)]   px-5 py-1.5 text-center "
@@ -61,7 +66,7 @@ function DashboardTab() {
                     <FaUser /> Users
                   </div>
                 </button>
-              </Tab>
+              </Tab> */}
             </TabList>
             {/* product  */}
             <TabPanel>
@@ -441,8 +446,8 @@ function DashboardTab() {
                       </th>
                     </tr>
                   </thead>
-                  {user.map((item, index) => {
-                    const { name, uid, email, date } = item;
+                  {/* {user.map((item, index) => {
+                    const { name, date } = item;
                     return (
                       <tbody>
                         <tr
@@ -465,22 +470,10 @@ function DashboardTab() {
                           >
                             {name}
                           </td>
-                          <td
-                            className="px-6 py-4 text-black "
-                            style={{ color: mode === "dark" ? "white" : "" }}
-                          >
-                            {email}
-                          </td>
-                          <td
-                            className="px-6 py-4 text-black "
-                            style={{ color: mode === "dark" ? "white" : "" }}
-                          >
-                            {uid}
-                          </td>
                         </tr>
                       </tbody>
                     );
-                  })}
+                  })} */}
                 </table>
               </div>
             </TabPanel>

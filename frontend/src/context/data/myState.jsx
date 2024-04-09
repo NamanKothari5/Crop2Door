@@ -3,10 +3,15 @@ import MyContext from './myContext'
 import { Timestamp, addDoc, collection, deleteDoc, doc, getDocs, onSnapshot, orderBy, query, setDoc } from 'firebase/firestore';
 import { toast } from 'react-toastify';
 import { fireDB } from '../../fireabase/FirebaseConfig';
-
+import { useNewProductMutation } from '../../redux/api/productApi';
+import { useSelector } from 'react-redux';
 function myState(props) {
     const [mode, setMode] = useState('light');
-
+    const [newProduct] = useNewProductMutation();
+    const { user } = useSelector(
+        (state) =>
+            state.userReducer
+    );
     const toggleMode = () => {
         if (mode === 'light') {
             setMode('dark');
@@ -21,45 +26,39 @@ function myState(props) {
     const [loading, setLoading] = useState(false);
 
     const [products, setProducts] = useState({
-        title: null,
+        name: null,
         price: null,
-        imageUrl: null,
         category: null,
         description: null,
-        time: Timestamp.now(),
-        date: new Date().toLocaleString(
-            "en-US",
-            {
-                month: "short",
-                day: "2-digit",
-                year: "numeric",
-            }
-        )
+        stock: null,
+        id:''
     });
 
     const addProduct = async () => {
-        if (products.title == null || products.price == null || products.imageUrl == null || products.category == null || products.description == null) {
+        if (products.name == null || products.price == null || products.category == null || products.description == null || products.stock == null) {
             return toast.error("all fields are required")
         }
 
-        setLoading(true)
+        // setLoading(true)
 
-        try {
-            const productRef = collection(fireDB, 'products');
-            await addDoc(productRef, products)
-            toast.success("Add product successfully");
-            setTimeout(() => {
-                window.location.href = '/dashboard'
-            }, 800);
-            getProductData();
-            setLoading(false)
-        } catch (error) {
-            console.log(error);
-            setLoading(false)
-        }
-        // setProducts("")
+        // try {
+        //     const productRef = collection(fireDB, 'products');
+        //     await addDoc(productRef, products)
+        //     toast.success("Add product successfully");
+        //     setTimeout(() => {
+        //         window.location.href = '/dashboard'
+        //     }, 800);
+        //     getProductData();
+        //     setLoading(false)
+        // } catch (error) {
+        //     console.log(error);
+        //     setLoading(false)
+        // }
+        // setProducts("");
+        
+        const res = await newProduct({id:user._id,products});
 
-
+        console.log(res);
     }
 
     const [product, setProduct] = useState([]);
@@ -156,29 +155,10 @@ function myState(props) {
         }
     }
 
-    const [user, setUser] = useState([]);
 
-    const getUserData = async () => {
-        setLoading(true)
-        try {
-            const result = await getDocs(collection(fireDB, "users"))
-            const usersArray = [];
-            result.forEach((doc) => {
-                usersArray.push(doc.data());
-                setLoading(false)
-            });
-            setUser(usersArray);
-            console.log(usersArray)
-            setLoading(false);
-        } catch (error) {
-            console.log(error)
-            setLoading(false)
-        }
-    }
 
     useEffect(() => {
         getOrderData();
-        getUserData();
     }, []);
 
     const [searchkey, setSearchkey] = useState('')
@@ -190,8 +170,8 @@ function myState(props) {
             mode, toggleMode, loading, setLoading,
             products, setProducts, addProduct, product,
             edithandle, updateProduct, deleteProduct, order,
-            user, searchkey, setSearchkey,filterType,setFilterType,
-            filterPrice,setFilterPrice
+            searchkey, setSearchkey, filterType, setFilterType,
+            filterPrice, setFilterPrice
         }}>
             {props.children}
         </MyContext.Provider>

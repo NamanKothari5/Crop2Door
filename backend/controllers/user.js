@@ -10,7 +10,6 @@ module.exports.loginUser = TryCatch(async (req, res, next) => {
 
     let user = await User.findById(_id);
 
-    console.log(user);
     if (user && user.role !== role) {
         return next(new CustomError("Incorrect credentials", 401));
     }

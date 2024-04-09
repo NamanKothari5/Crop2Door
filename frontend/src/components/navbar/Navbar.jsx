@@ -2,24 +2,27 @@ import React, { Fragment, useContext, useState } from "react";
 import myContext from "../../context/data/myContext";
 import { BsFillCloudSunFill } from "react-icons/bs";
 import { FiSun } from "react-icons/fi";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Dialog, Transition } from "@headlessui/react";
 import { RxCross2 } from "react-icons/rx";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { userNotExist } from "../../redux/reducer/userReducer";
 
 function Navbar() {
   const context = useContext(myContext);
   const { mode, toggleMode } = context;
-
+  const dispatch =useDispatch();
   const [open, setOpen] = useState(false);
-
-  const user = JSON.parse(localStorage.getItem("user"));
-
-  // console.log(user.user.email)
+  const navigate=useNavigate();
+  const { user, loading } = useSelector(
+    (state) =>
+      state.userReducer
+  );
+  
 
   const logout = () => {
-    localStorage.clear("user");
-    window.location.href = "/login";
+    dispatch(userNotExist());
+    navigate("/login");
   };
 
   const cartItems = useSelector((state) => state.cart);
@@ -90,7 +93,7 @@ function Navbar() {
                     ""
                   )}
 
-                  {user?.user?.email === "naman@g.com" ? (
+                  {user?.email === "nrpatil_b20@it.vjti.ac.in" ? (
                     <div className="flow-root">
                       <Link
                         to={"/dashboard"}
@@ -232,7 +235,7 @@ function Navbar() {
                     </Link>
                   )}
 
-                  {user?.user?.email === "naman@g.com" ? (
+                  {user?.email === "nrpatil_b20@it.vjti.ac.in" ? (
                     <Link
                       to={"/dashboard"}
                       className="text-sm font-medium text-green-700 "

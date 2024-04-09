@@ -110,8 +110,6 @@ module.exports.newOrder = TryCatch(async (req, res, next) => {
   jsonData = await response.json();
   distances = jsonData.distances;
 
-  console.log(distances);
-
   generateClusters(
     requiredProducts,
     produce,

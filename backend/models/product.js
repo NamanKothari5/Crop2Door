@@ -16,19 +16,11 @@ const productSchema = mongoose.Schema({
         type: Number,
         required: [true, "Please enter stock"]
     },
-    type: {
-        type: String,
-        enum: ["General", "Specialized"],
-        required: [true, "Please enter product type"],
-    },
     description: {
         type: String
     },
     price: {
         type: Number,
-    },
-    certifications: {
-        type: String
     },
     farm: {
         type: mongoose.Schema.Types.ObjectId,
