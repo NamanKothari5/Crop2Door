@@ -1,9 +1,43 @@
 import React, { useContext, useState } from "react";
 import myContext from "../../../context/data/myContext";
-
+import { useNavigate } from "react-router-dom";
+import { useNewProductMutation } from "../../../redux/api/productApi";
+import { useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
 function AddProduct() {
   const context = useContext(myContext);
-  const { products, setProducts, addProduct } = context;
+  const navigate = useNavigate();
+  const [newProduct] = useNewProductMutation();
+  
+  const { user } = useSelector(
+    (state) =>
+      state.userReducer
+  );
+  const [loading, setLoading] = useState(false);
+  const [products, setProducts] = useState({
+    name: null,
+    price: null,
+    category: null,
+    description: null,
+    stock: null,
+    id: ''
+  });
+  const addProduct = async () => {
+    if (products.name == null || products.price == null || products.category == null || products.description == null || products.stock == null) {
+      return toast.error("all fields are required")
+    }
+
+    setLoading(true);
+    const res = await newProduct({ id: user._id, products });
+
+    if ("data" in res) {
+      toast.success("Add product successfully");
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 800);
+      setLoading(false);
+    }
+  }
   return (
     <div>
       <div className="flex justify-center items-center h-screen">

@@ -22,7 +22,7 @@ function Navbar() {
 
   const logout = () => {
     dispatch(userNotExist());
-    navigate("/login");
+    navigate("/");
   };
 
   const cartItems = useSelector((state) => state.cart);
@@ -93,7 +93,7 @@ function Navbar() {
                     ""
                   )}
 
-                  {user?.email === "nrpatil_b20@it.vjti.ac.in" ? (
+                  {user?.role === "farmer" ? (
                     <div className="flow-root">
                       <Link
                         to={"/dashboard"}
@@ -120,11 +120,11 @@ function Navbar() {
                   ) : (
                     <div className="flow-root">
                       <Link
-                        to={"/signup"}
+                        to={"/login"}
                         className="-m-2 block p-2 font-medium text-green-900 cursor-pointer"
                         style={{ color: mode === "dark" ? "white" : "" }}
                       >
-                        Signup
+                        Sign-in
                       </Link>
                     </div>
                   )}
@@ -227,15 +227,15 @@ function Navbar() {
                     </Link>
                   ) : (
                     <Link
-                      to={"/signup"}
+                      to={"/login"}
                       className="text-sm font-medium text-green-700 "
                       style={{ color: mode === "dark" ? "white" : "" }}
                     >
-                      Signup
+                      Sign-in
                     </Link>
                   )}
 
-                  {user?.email === "nrpatil_b20@it.vjti.ac.in" ? (
+                  {user?.role === 'farmer' ? (
                     <Link
                       to={"/dashboard"}
                       className="text-sm font-medium text-green-700 "

@@ -5,6 +5,8 @@ import { toast } from 'react-toastify';
 import { fireDB } from '../../fireabase/FirebaseConfig';
 import { useNewProductMutation } from '../../redux/api/productApi';
 import { useSelector } from 'react-redux';
+
+
 function myState(props) {
     const [mode, setMode] = useState('light');
     const [newProduct] = useNewProductMutation();
@@ -31,41 +33,31 @@ function myState(props) {
         category: null,
         description: null,
         stock: null,
-        id:''
+        id: ''
     });
 
     const addProduct = async () => {
         if (products.name == null || products.price == null || products.category == null || products.description == null || products.stock == null) {
             return toast.error("all fields are required")
         }
-
-        // setLoading(true)
-
-        // try {
-        //     const productRef = collection(fireDB, 'products');
-        //     await addDoc(productRef, products)
-        //     toast.success("Add product successfully");
-        //     setTimeout(() => {
-        //         window.location.href = '/dashboard'
-        //     }, 800);
-        //     getProductData();
-        //     setLoading(false)
-        // } catch (error) {
-        //     console.log(error);
-        //     setLoading(false)
-        // }
-        // setProducts("");
         
-        const res = await newProduct({id:user._id,products});
+        setLoading(true);
+        const res = await newProduct({ id: user._id, products });
 
-        console.log(res);
+        if ("data" in res) {
+            toast.success("Add product successfully");
+            setTimeout(() => {
+                window.location.href = '/dashboard'
+            }, 800);
+            setLoading(false);
+        }
     }
 
     const [product, setProduct] = useState([]);
 
     const getProductData = async () => {
 
-        setLoading(true)
+        setLoading(true);
 
         try {
             const q = query(

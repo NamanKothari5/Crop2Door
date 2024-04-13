@@ -27,12 +27,14 @@ import { userExist, userNotExist } from './redux/reducer/userReducer';
 import { getUser } from './redux/api/userApi';
 
 function App() {
-
+  const { user, loading } = useSelector(
+    (state) =>
+      state.userReducer
+  );
   const dispatch = useDispatch();
   useEffect(() => {
     onAuthStateChanged(auth, async (user) => {
       if (user) {
-        
         const data = await getUser(user.uid);
         if (data.user)
           dispatch(userExist(data.user));
@@ -48,31 +50,32 @@ function App() {
     <MyState>
       <Router>
         <Routes>
+          <Route path='/faker' element={<MyState />} />
           <Route path="/" element={<Home />} />
           <Route path="/allproducts" element={<Allproducts />} />
           <Route path="/order" element={
-            <ProtectedRoute>
+            <ProtectedRoute user={user}>
               <Order />
             </ProtectedRoute>
           } />
           <Route path="/cart" element={<Cart />} />
           <Route path="/dashboard" element={
-            <ProtectedRouteForAdmin>
+            <ProtectedRouteForFarmer user={user}>
               <Dashboard />
-            </ProtectedRouteForAdmin>
+            </ProtectedRouteForFarmer>
           } />
           <Route path='/login' element={<Login />} />
           
           <Route path='/productinfo/:id' element={<ProductInfo />} />
           <Route path='/addproduct' element={
-            <ProtectedRouteForAdmin>
+            <ProtectedRouteForFarmer user={user}>
               <AddProduct />
-            </ProtectedRouteForAdmin>
+            </ProtectedRouteForFarmer>
           } />
-          <Route path='/updateproduct' element={
-            <ProtectedRouteForAdmin>
+          <Route path='/updateproduct/:id' element={
+            <ProtectedRouteForFarmer user={user}>
               <UpdateProduct />
-            </ProtectedRouteForAdmin>
+            </ProtectedRouteForFarmer>
           } />
           <Route path="/*" element={<NoPage />} />
         </Routes>
@@ -86,13 +89,10 @@ function App() {
 
 // user 
 
-export const ProtectedRoute = ({ children }) => {
-  const { user, loading } = useSelector(
-    (state) =>
-      state.userReducer
-  );
-  if (user) {
-    return children
+export const ProtectedRoute = (props) => {
+  
+  if (props.user) {
+    return props.children
   } else {
     return <Navigate to={'/login'} />
   }
@@ -100,13 +100,10 @@ export const ProtectedRoute = ({ children }) => {
 
 // admin 
 
-const ProtectedRouteForAdmin = ({ children }) => {
-  const { user, loading } = useSelector(
-    (state) =>
-      state.userReducer
-  );
-  if (user?.email === 'nrpatil_b20@it.vjti.ac.in') {
-    return children
+const ProtectedRouteForFarmer = (props) => {
+  
+  if (props.user?.role === 'farmer') {
+    return props.children
   }
   else {
     return <Navigate to={'/login'} />

@@ -81,10 +81,11 @@ module.exports.getAllProducts = TryCatch(async (req, res, next) => {
     }
 
     let products = {};
-
+    
     const productPromises = validFarms.map(async (farm) => {
         for (const id of farm.products) {
             const product = await Product.findById(id);
+            
             if (product.name in products) {
                 products[product.name].quantity += product.stock;
             } else {
@@ -98,6 +99,19 @@ module.exports.getAllProducts = TryCatch(async (req, res, next) => {
     return res.status(200).json({
         success: true,
         products
+    });
+})
+
+module.exports.getAllProductsByFarmer = TryCatch(async(req,res,next)=>{
+    
+    const {id} = req.query;
+    const user = await User.findById(id);
+    const farmId = user.farm;
+    const farm = await Farm.findById(farmId).populate("products");
+
+    return res.status(201).json({
+        success: true,
+        products:farm.products
     });
 })
 /*
@@ -134,6 +148,7 @@ module.exports.getSingleProduct = TryCatch(async (req, res, next) => {
 })
 
 module.exports.updateProduct = TryCatch(async (req, res, next) => {
+    
     const id = req.params.id;
     const product = await Product.findById(id);
     if (!product) return next(new CustomError("Product Not Found", 404));
@@ -146,17 +161,17 @@ module.exports.updateProduct = TryCatch(async (req, res, next) => {
     if (description) product.description = description;
     if (price) product.price = price;
 
-    if (Object.keys(req.files).length >= 1) {
-        if (req.files.photo !== undefined) {
-            const photo = req.files.photo[0];
-            if (photo) {
-                fs.rm(product.photo, () => {
-                    console.log("Old Photo Deleted");
-                });
-                product.photo = photo.path;
-            }
-        }
-    }
+    // if (Object.keys(req.files).length >= 1) {
+    //     if (req.files.photo !== undefined) {
+    //         const photo = req.files.photo[0];
+    //         if (photo) {
+    //             fs.rm(product.photo, () => {
+    //                 console.log("Old Photo Deleted");
+    //             });
+    //             product.photo = photo.path;
+    //         }
+    //     }
+    // }
 
     await product.save();
 
@@ -171,14 +186,9 @@ module.exports.deleteProduct = TryCatch(async (req, res, next) => {
     const product = await Product.findById(id);
     if (!product) return next(new CustomError("Product Not Found", 404));
 
-    fs.rm(product.photo, () => {
-        console.log("Product Photo Deleted");
-    });
-    if (product.type == "Specialized") {
-        fs.rm(product.certifications, () => {
-            console.log("Product Certification Deleted");
-        });
-    }
+    // fs.rm(product.photo, () => {
+    //     console.log("Product Photo Deleted");
+    // });
 
     const farmId = product.farm;
     const farm = await Farm.findById(farmId);

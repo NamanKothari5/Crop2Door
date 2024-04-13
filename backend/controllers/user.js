@@ -22,7 +22,16 @@ module.exports.loginUser = TryCatch(async (req, res, next) => {
 
     
     const coordinates = await getCoordinates(address, pincode);
+
+
     user = await User.create({ _id, name, email, address, pincode: Number(pincode),coordinates, role });
+
+    if(user.role=='farmer'){
+        const coordinates = await getCoordinates(address, pincode);
+        const newFarm=await Farm.create({address,pincode,user:_id,coordinates});
+        user.farm=newFarm._id;
+        await user.save();
+    }
     res.status(200).json({
         success: true,
         message: `Welcome ${user.name}`

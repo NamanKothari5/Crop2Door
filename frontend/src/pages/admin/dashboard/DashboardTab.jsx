@@ -6,27 +6,32 @@ import { MdOutlineProductionQuantityLimits } from "react-icons/md";
 import { FaUser, FaCartPlus } from "react-icons/fa";
 import { AiFillShopping, AiFillPlusCircle, AiFillDelete } from "react-icons/ai";
 import { Link } from "react-router-dom";
-import { useSelector } from 'react-redux';
 import { useNavigate } from "react-router-dom";
+import { store } from "../../../redux/store";
+import { useAllFarmerProductsQuery, useDeleteProductMutation } from "../../../redux/api/productApi";
+import { toast } from 'react-toastify';
 function DashboardTab() {
+  
   const context = useContext(myContext);
-  const { user, loading } = (
-    (state) =>
-      state.userReducer
-  );
-  const { mode, product, edithandle, deleteProduct, order } = context;
+  const user = store.getState().userReducer.user;
+  const { data, isLoading } = useAllFarmerProductsQuery(user._id);
+  const [products,setProducts]=useState([]);
+  const { mode, product, order } = context;
   const navigate = useNavigate();
-  // console.log(product)
   let [isOpen, setIsOpen] = useState(false);
-
   function closeModal() {
     setIsOpen(false);
   }
-
+  const [deleteProduct] = useDeleteProductMutation();
   function openModal() {
     setIsOpen(true);
   }
-
+  const deleteHandler = async(id) => {
+    const res = await deleteProduct({ productId: id, userId: user._id });
+    if ("data" in res) {
+      toast.success("Product Deleted successfully");
+    }
+  }
   const add = () => {
     navigate("/addproduct");
   };
@@ -107,10 +112,10 @@ function DashboardTab() {
                           S.No
                         </th>
                         <th scope="col" className="px-6 py-3">
-                          Image
+                          Photo
                         </th>
                         <th scope="col" className="px-6 py-3">
-                          Title
+                          Name
                         </th>
                         <th scope="col" className="px-6 py-3">
                           Price
@@ -119,21 +124,19 @@ function DashboardTab() {
                           Category
                         </th>
                         <th scope="col" className="px-6 py-3">
-                          Date
+                          Stock
                         </th>
                         <th scope="col" className="px-6 py-3">
-                          Action
+                          Delete | Edit
                         </th>
                       </tr>
                     </thead>
-                    {product.map((item, index) => {
+                    {!isLoading && data.products.map((item, index) => {
                       const {
-                        title,
+                        name,
                         price,
-                        imageUrl,
                         category,
-                        description,
-                        date,
+                        stock,
                       } = item;
                       return (
                         <tbody className="">
@@ -155,13 +158,13 @@ function DashboardTab() {
                               scope="row"
                               className="px-6 py-4 font-medium text-black whitespace-nowrap"
                             >
-                              <img className="w-16" src={imageUrl} alt="img" />
+                              <img className="w-16" src="https://t4.ftcdn.net/jpg/03/27/96/23/360_F_327962332_6mb5jQLnTOjhYeXML7v45Hc5eED2GYOD.jpg" alt="img" />
                             </th>
                             <td
                               className="px-6 py-4 text-black "
                               style={{ color: mode === "dark" ? "white" : "" }}
                             >
-                              {title}
+                              {name}
                             </td>
                             <td
                               className="px-6 py-4 text-black "
@@ -179,7 +182,7 @@ function DashboardTab() {
                               className="px-6 py-4 text-black "
                               style={{ color: mode === "dark" ? "white" : "" }}
                             >
-                              {date}
+                              {stock}
                             </td>
                             <td className="px-6 py-4">
                               <div className=" flex gap-2">
@@ -189,7 +192,7 @@ function DashboardTab() {
                                     color: mode === "dark" ? "white" : "",
                                   }}
                                 >
-                                  <div onClick={() => deleteProduct(item)}>
+                                  <div onClick={() => deleteHandler(item._id)}>
                                     <svg
                                       xmlns="http://www.w3.org/2000/svg"
                                       fill="none"
@@ -206,8 +209,8 @@ function DashboardTab() {
                                     </svg>
                                   </div>
 
-                                  <Link to={"/updateproduct"}>
-                                    <div onClick={() => edithandle(item)}>
+                                  <Link to={`/updateproduct/${item._id}`}>
+                                    <div>
                                       <svg
                                         xmlns="http://www.w3.org/2000/svg"
                                         fill="none"
@@ -446,34 +449,7 @@ function DashboardTab() {
                       </th>
                     </tr>
                   </thead>
-                  {/* {user.map((item, index) => {
-                    const { name, date } = item;
-                    return (
-                      <tbody>
-                        <tr
-                          className="bg-green-50 border-b  dark:border-green-700"
-                          style={{
-                            backgroundColor:
-                              mode === "dark" ? "rgb(46 49 55)" : "",
-                            color: mode === "dark" ? "white" : "",
-                          }}
-                        >
-                          <td
-                            className="px-6 py-4 text-black "
-                            style={{ color: mode === "dark" ? "white" : "" }}
-                          >
-                            {index + 1}.
-                          </td>
-                          <td
-                            className="px-6 py-4 text-black "
-                            style={{ color: mode === "dark" ? "white" : "" }}
-                          >
-                            {name}
-                          </td>
-                        </tr>
-                      </tbody>
-                    );
-                  })} */}
+
                 </table>
               </div>
             </TabPanel>
