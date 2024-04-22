@@ -39,12 +39,13 @@ function ProductInfo() {
   //   getProductData();
   // }, []);
 
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart);
-  // console.log(cartItems)
+  
 
   // add to cart
   const addCart = (products) => {
+    console.log(products);
     dispatch(addToCart(products));
     toast.success("add to cart");
   };
@@ -72,7 +73,7 @@ function ProductInfo() {
                     1kg @₹{productDetails[productName].price}
                   </span>
                   <button
-                    onClick={() => addCart(products)}
+                    onClick={() => addCart(productName)}
                     className="flex ml-auto text-white bg-green-500 border-0 py-2 px-6 focus:outline-none hover:bg-green-600 rounded"
                   >
                     Add To Cart

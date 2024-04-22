@@ -123,8 +123,6 @@ module.exports.newOrder = TryCatch(async (req, res, next) => {
 
   let { min_dist, finalPath } = findCluster(distances, allClusters);
 
-  
-
   finalPath=finalPath.map((idx)=>{
     if(idx<validFarms.length){
         const farm = validFarms[idx];
