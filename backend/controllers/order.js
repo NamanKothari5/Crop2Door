@@ -71,7 +71,7 @@ module.exports.newOrder = TryCatch(async (req, res, next) => {
     if (distances[idx] <= 200000) validFarms.push(allFarms[idx - 1]);
   }
 
-  console.log(validFarms);
+  
 
   let produce = validFarms.map((e) => {
     return {};
@@ -119,11 +119,11 @@ module.exports.newOrder = TryCatch(async (req, res, next) => {
     allClusters
   );
 
-  console.log(allClusters);
+  
 
   let { min_dist, finalPath } = findCluster(distances, allClusters);
 
-  console.log(finalPath);
+  
 
   finalPath=finalPath.map((idx)=>{
     if(idx<validFarms.length){

@@ -4,6 +4,7 @@ import {
   Route,
   Routes,
   Navigate,
+  useLocation,
 } from "react-router-dom";
 
 import Home from './pages/home/Home';
@@ -25,6 +26,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './fireabase/FirebaseConfig';
 import { userExist, userNotExist } from './redux/reducer/userReducer';
 import { getUser } from './redux/api/userApi';
+import { productDetails } from './assets/productDetails';
 
 function App() {
   const { user, loading } = useSelector(
@@ -65,8 +67,8 @@ function App() {
             </ProtectedRouteForFarmer>
           } />
           <Route path='/login' element={<Login />} />
-          
-          <Route path='/productinfo/:id' element={<ProductInfo />} />
+
+          <Route path='/productinfo' element={<ProductInfo />} />
           <Route path='/addproduct' element={
             <ProtectedRouteForFarmer user={user}>
               <AddProduct />
@@ -90,23 +92,24 @@ function App() {
 // user 
 
 export const ProtectedRoute = (props) => {
-  
+  const location = useLocation();
   if (props.user) {
     return props.children
   } else {
-    return <Navigate to={'/login'} />
+    return <Navigate to={'/login'} state={{ prevPath: location.pathname }}/>
   }
 }
 
 // admin 
 
 const ProtectedRouteForFarmer = (props) => {
+  const location = useLocation();
   
   if (props.user?.role === 'farmer') {
     return props.children
   }
   else {
-    return <Navigate to={'/login'} />
+    return <Navigate to={'/login'} state={{ prevPath: location.pathname }} />
   }
 
 };

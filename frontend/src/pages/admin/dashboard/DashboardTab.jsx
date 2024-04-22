@@ -10,8 +10,8 @@ import { useNavigate } from "react-router-dom";
 import { store } from "../../../redux/store";
 import { useAllFarmerProductsQuery, useDeleteProductMutation } from "../../../redux/api/productApi";
 import { toast } from 'react-toastify';
+import {productDetails} from '../../../assets/productDetails'
 function DashboardTab() {
-  
   const context = useContext(myContext);
   const user = store.getState().userReducer.user;
   const { data, isLoading } = useAllFarmerProductsQuery(user._id);
@@ -158,7 +158,7 @@ function DashboardTab() {
                               scope="row"
                               className="px-6 py-4 font-medium text-black whitespace-nowrap"
                             >
-                              <img className="w-16" src="https://t4.ftcdn.net/jpg/03/27/96/23/360_F_327962332_6mb5jQLnTOjhYeXML7v45Hc5eED2GYOD.jpg" alt="img" />
+                              <img className="w-16 h-16" src={productDetails[name].imageUrl} alt="img" />
                             </th>
                             <td
                               className="px-6 py-4 text-black "
@@ -170,13 +170,13 @@ function DashboardTab() {
                               className="px-6 py-4 text-black "
                               style={{ color: mode === "dark" ? "white" : "" }}
                             >
-                              ₹{price}
+                              ₹{productDetails[name].price}
                             </td>
                             <td
                               className="px-6 py-4 text-black "
                               style={{ color: mode === "dark" ? "white" : "" }}
                             >
-                              {category}
+                              {productDetails[name].category}
                             </td>
                             <td
                               className="px-6 py-4 text-black "

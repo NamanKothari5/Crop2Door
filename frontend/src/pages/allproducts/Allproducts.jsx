@@ -1,27 +1,41 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Filter from "../../components/filter/Filter";
-import ProductCard from "../../components/productCard/ProductCard";
 import Layout from "../../components/layout/Layout";
 import myContext from "../../context/data/myContext";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../../redux/cartSlice";
+import { useAllProductsMutation } from "../../redux/api/productApi";
+import { productDetails } from "../../assets/productDetails";
+import { toast } from "react-toastify";
 
 function Allproducts() {
   const context = useContext(myContext);
   const {
-    mode,
-    product,
-    searchkey,
-    setSearchkey,
-    filterType,
-    setFilterType,
-    filterPrice,
-    setFilterPrice,
+    mode
   } = context;
+  const { user, loading } = useSelector(
+    (state) => state.userReducer
+  );
 
+  const [getAllProducts] = useAllProductsMutation();
+  const [allProductDetails, setAllProductsDetails] = useState({});
+  const [productNameList, setProductNameList] = useState([]);
+  useEffect(() => {
+    async function fetchProducts() {
+      if (user) {
+        const res = await getAllProducts({ userId: user._id, userCoordinates: user.coordinates });
+        if ("data" in res) {
+          const products = res.data.products;
+          setAllProductsDetails(products);
+          setProductNameList(Object.keys(products));
+
+        }
+      }
+    }
+    fetchProducts();
+  }, [user]);
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart);
-  console.log(cartItems);
 
   const addCart = (product) => {
     dispatch(addToCart(product));
@@ -51,20 +65,13 @@ function Allproducts() {
           </div>
 
           <div className="flex flex-wrap -m-4">
-            {product
-              .filter((obj) => obj.title.toLowerCase().includes(searchkey))
-              .filter((obj) => obj.category.toLowerCase().includes(filterType))
-              .filter((obj) => obj.price.includes(filterPrice))
+            {productNameList
               .map((item, index) => {
-                const { title, price, description, imageUrl, id } = item;
+                const { quantity } = allProductDetails[item];
+                const { imageUrl, price } = productDetails[item];
+
                 return (
-                  <div
-                    onClick={() =>
-                      (window.location.href = `/productinfo/${id}`)
-                    }
-                    key={index}
-                    className="p-4 md:w-1/4  drop-shadow-lg "
-                  >
+                  <div key={index} className="p-4 md:w-1/4  drop-shadow-lg ">
                     <div
                       className="h-full border-2 hover:shadow-green-100 hover:shadow-2xl transition-shadow duration-300 ease-in-out    border-green-200 border-opacity-60 rounded-2xl overflow-hidden"
                       style={{
@@ -72,22 +79,25 @@ function Allproducts() {
                         color: mode === "dark" ? "white" : "",
                       }}
                     >
-                      <div className="flex justify-center cursor-pointer">
+                      <div
+                        onClick={() =>
+                          (window.location.href = `/productinfo?name=${item}&quantity=${quantity}`)
+                        }
+                        className="flex justify-center cursor-pointer"
+                      >
                         <img
                           className=" rounded-2xl w-full h-80 p-2 hover:scale-110 transition-scale-110  duration-300 ease-in-out"
                           src={imageUrl}
                           alt="blog"
                         />
                       </div>
-                      <div className="p-5 border-t-2">
-                        
+                      <div className="p-5 border-t-2 ">
                         <h1
                           className="title-font text-lg font-medium text-green-900 mb-3"
                           style={{ color: mode === "dark" ? "white" : "" }}
                         >
-                          {title}
+                          {item}
                         </h1>
-                        {/* <p className="leading-relaxed mb-3">{item.description.}</p> */}
                         <p
                           className="leading-relaxed mb-3"
                           style={{ color: mode === "dark" ? "white" : "" }}

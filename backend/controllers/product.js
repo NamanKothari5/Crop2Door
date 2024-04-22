@@ -77,7 +77,7 @@ module.exports.getAllProducts = TryCatch(async (req, res, next) => {
     let validFarms = [];
     for (let idx = 1; idx < distances.length; idx++) {
         if (distances[idx] <= 30000)
-            validFarms.push(allFarms[idx - 1]);
+        validFarms.push(allFarms[idx - 1]);
     }
 
     let products = {};

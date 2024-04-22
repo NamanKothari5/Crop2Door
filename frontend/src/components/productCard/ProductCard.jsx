@@ -1,9 +1,10 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import myContext from "../../context/data/myContext";
 import { useDispatch, useSelector } from "react-redux";
+import { useAllProductsMutation } from "../../redux/api/productApi";
+import { productDetails } from "../../assets/productDetails";
 import { addToCart } from "../../redux/cartSlice";
 import { toast } from "react-toastify";
-
 function ProductCard() {
   const context = useContext(myContext);
   const {
@@ -16,19 +17,36 @@ function ProductCard() {
     filterPrice,
     setFilterPrice,
   } = context;
+  const { user, loading } = useSelector(
+    (state) => state.userReducer
+  );
+
+  const [getAllProducts] = useAllProductsMutation();
+  const [allProductDetails, setAllProductsDetails] = useState({});
+  const [productNameList,setProductNameList]=useState([]);
+  useEffect(() => {
+    async function fetchProducts() {
+      if (user) {
+        const res = await getAllProducts({ userId: user._id, userCoordinates: user.coordinates });
+        if ("data" in res) {
+          const products = res.data.products;
+          setAllProductsDetails(products);
+          setProductNameList(Object.keys(products));
+        }
+      }
+    }
+    fetchProducts();
+  }, [user]);
 
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart);
-  console.log(cartItems);
 
   const addCart = (product) => {
     dispatch(addToCart(product));
     toast.success("add to cart");
   };
 
-  useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(cartItems));
-  }, [cartItems]);
+  
   return (
     <section className="text-green-600 body-font">
       <div className="container px-5 py-8 md:py-16 mx-auto">
@@ -43,13 +61,12 @@ function ProductCard() {
         </div>
 
         <div className="flex flex-wrap -m-4">
-          {product
-            .filter((obj) => obj.title.toLowerCase().includes(searchkey))
-            .filter((obj) => obj.category.toLowerCase().includes(filterType))
-            .filter((obj) => obj.price.includes(filterPrice))
-            .slice(0, 8)
+          
+          {productNameList
             .map((item, index) => {
-              const { title, price, description, imageUrl, id } = item;
+              const { quantity } =allProductDetails[item];
+              const {imageUrl,price}=productDetails[item];
+    
               return (
                 <div key={index} className="p-4 md:w-1/4  drop-shadow-lg ">
                   <div
@@ -61,7 +78,7 @@ function ProductCard() {
                   >
                     <div
                       onClick={() =>
-                        (window.location.href = `/productinfo/${id}`)
+                        (window.location.href = `/productinfo?name=${item}&quantity=${quantity}`)
                       }
                       className="flex justify-center cursor-pointer"
                     >
@@ -76,7 +93,7 @@ function ProductCard() {
                         className="title-font text-lg font-medium text-green-900 mb-3"
                         style={{ color: mode === "dark" ? "white" : "" }}
                       >
-                        {title}
+                        {item}
                       </h1>
                       <p
                         className="leading-relaxed mb-3"

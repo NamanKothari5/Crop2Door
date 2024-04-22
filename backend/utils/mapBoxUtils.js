@@ -1,7 +1,8 @@
 
 module.exports.getCoordinates = async (address, pincode) => {
-  const baseURl = process.env.MAPBOX_BASE_URL;
-  const token = process.env.MAPBOX_TOKEN;
+  const baseURl = process.env.MAPBOX_BASE_URL || 'https://api.mapbox.com';
+  const token = process.env.MAPBOX_TOKEN || 'pk.eyJ1IjoibmlzaHRhbiIsImEiOiJja3ZkcGNmZWg0d25wMm5xd2RkcDBzeHVsIn0.irJll1qHLs4XBFONtsVYFA';
+  
   const response = await fetch(
     `${baseURl}/geocoding/v5/mapbox.places/${address + "," + pincode
     }.json?limit=1&access_token=${token}`
@@ -116,7 +117,6 @@ function popcount(num) {
 }
 
 module.exports.findCluster = (v, clusters) => {
-
 
   let res = Infinity;
   let finalPath = [];

@@ -7,6 +7,8 @@ import { doc, getDoc } from "firebase/firestore";
 import { toast } from "react-toastify";
 import { addToCart } from "../../redux/cartSlice";
 import { fireDB } from "../../fireabase/FirebaseConfig";
+import { useSearchParams } from "react-router-dom";
+import { productDetails } from "../../assets/productDetails";
 
 function ProductInfo() {
   const context = useContext(myContext);
@@ -14,27 +16,30 @@ function ProductInfo() {
 
   const [products, setProducts] = useState("");
   const params = useParams();
-  // console.log(products.title)
 
-  const getProductData = async () => {
-    setLoading(true);
-    try {
-      const productTemp = await getDoc(doc(fireDB, "products", params.id));
-      // console.log(productTemp)
-      setProducts(productTemp.data());
-      // console.log(productTemp.data())
-      setLoading(false);
-    } catch (error) {
-      console.log(error);
-      setLoading(false);
-    }
-  };
+  const [searchParams]=useSearchParams();
+  const productName=searchParams.get('name');
+  const stock=searchParams.get('quantity');
+  // const getProductData = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const productTemp = await getDoc(doc(fireDB, "products", params.id));
+  //     // console.log(productTemp)
+  //     setProducts(productTemp.data());
+  //     // console.log(productTemp.data())
+  //     setLoading(false);
+  //   } catch (error) {
+  //     console.log(error);
+  //     setLoading(false);
+  //   }
+  // };
 
-  useEffect(() => {
-    getProductData();
-  }, []);
+  // useEffect(() => {
+    
+  //   getProductData();
+  // }, []);
 
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart);
   // console.log(cartItems)
 
@@ -44,32 +49,27 @@ function ProductInfo() {
     toast.success("add to cart");
   };
 
-  useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(cartItems));
-  }, [cartItems]);
-
   return (
     <Layout>
       <section className="text-green-600 body-font overflow-hidden">
-        <div className="container px-5 py-10 mx-auto">
-          {products && (
+        <div className="container px-5 py-10 mx-auto min-h-screen">
             <div className="lg:w-4/5 mx-auto flex flex-wrap">
               <img
                 alt="ecommerce"
-                className="lg:w-1/3 w-full lg:h-auto  object-cover object-center rounded"
-                src={products.imageUrl}
+                className="w-40 h-40 lg:h-auto  object-cover object-center rounded"
+                src={productDetails[productName].imageUrl}
               />
               <div className="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0">
                 <h1 className="text-green-900 text-3xl title-font font-medium mb-1">
-                  {products.title}
+                  {productDetails[productName].name}
                 </h1>
                 <p className="leading-relaxed border-b-2 mb-5 pb-5">
-                  {products.description}
+                  {productDetails[productName].description}
                 </p>
 
                 <div className="flex">
                   <span className="title-font font-medium text-2xl text-green-900">
-                    1kg @₹{products.price}
+                    1kg @₹{productDetails[productName].price}
                   </span>
                   <button
                     onClick={() => addCart(products)}
@@ -92,7 +92,6 @@ function ProductInfo() {
                 </div>
               </div>
             </div>
-          )}
         </div>
       </section>
     </Layout>

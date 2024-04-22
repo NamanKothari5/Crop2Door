@@ -7,6 +7,7 @@ import { deleteFromCart } from "../../redux/cartSlice";
 import { toast } from "react-toastify";
 import { addDoc, collection } from "firebase/firestore";
 import { fireDB } from "../../fireabase/FirebaseConfig";
+import { productDetails } from "../../assets/productDetails";
 
 function Cart() {
   const context = useContext(myContext);
@@ -31,15 +32,14 @@ function Cart() {
   useEffect(() => {
     let temp = 0;
     cartItems.forEach((cartItem) => {
-      temp = temp + parseInt(cartItem.price);
+      temp = temp + parseInt(productDetails[cartItem].price);
     });
     setTotalAmount(temp);
     console.log(temp);
   }, [cartItems]);
 
   const shipping = parseInt(100);
-
-  const grandTotal = shipping + totalAmout;
+  const grandTotal = (totalAmout >= 500 ? 0 : shipping) + totalAmout;
   // console.log(grandTotal)
 
   /**========================================================================
@@ -134,7 +134,9 @@ function Cart() {
         <div className="mx-auto max-w-5xl justify-center px-6 md:flex md:space-x-6 xl:px-0 ">
           <div className="rounded-lg md:w-2/3 ">
             {cartItems.map((item, index) => {
-              const { title, price, description, imageUrl } = item;
+
+              const price = productDetails[item].price, description = productDetails[item].description, imageUrl = productDetails[item].imageUrl;
+
               return (
                 <div
                   className="justify-between mb-6 rounded-lg border  drop-shadow-xl bg-white p-6  sm:flex  sm:justify-start"
@@ -154,7 +156,7 @@ function Cart() {
                         className="text-lg font-bold text-green-900"
                         style={{ color: mode === "dark" ? "white" : "" }}
                       >
-                        {title}
+                        {name}
                       </h2>
                       <h2
                         className="text-sm  text-green-900"

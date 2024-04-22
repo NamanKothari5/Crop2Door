@@ -1,8 +1,8 @@
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { useDispatch,useSelector } from 'react-redux';
 import { userExist } from '../../redux/reducer/userReducer';
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { getUser, useLoginMutation } from '../../redux/api/userApi';
 import { auth } from '../../fireabase/FirebaseConfig';
 import { toast } from 'react-toastify';
@@ -17,9 +17,20 @@ const LoginPage = () => {
     const [address, setAddress] = useState("");
     const [registeredRole, setRegisteredRole] = useState("");
     const [newRole, setNewRole] = useState("");
+    const location = useLocation();
+    
+    const { user, loading } = useSelector(
+        (state) =>
+            state.userReducer
+    );
+    useEffect(() => {
+        if(user && location.state){
+            const redirectPath=location.state.prevPath;
+            navigate(`${redirectPath}`);
+        }
+    },[user])
     const loginHandler = async (e) => {
         e.preventDefault();
-
         try {
             const provider = new GoogleAuthProvider();
             const { user } = await signInWithPopup(auth, provider);
@@ -39,7 +50,7 @@ const LoginPage = () => {
 
             const res = await login(loginProperties);
 
-            
+
             if ("data" in res) {
                 const data = await getUser(user.uid);
                 dispatch(userExist(data.user));

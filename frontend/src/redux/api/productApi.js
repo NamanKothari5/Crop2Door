@@ -6,7 +6,7 @@ export const productAPI = createApi({
     baseQuery: fetchBaseQuery({
         baseUrl: `${import.meta.env.VITE_APP_SERVER}/api/product/`,
     }),
-    tagTypes:["product"],
+    tagTypes: ["product"],
     endpoints: (builder) => ({
         newProduct: builder.mutation({
             query: ({ id, products }) => {
@@ -14,13 +14,21 @@ export const productAPI = createApi({
                     url: `new/?id=${id}`,
                     method: "POST",
                     body: products,
+
                 }
             },
-            invalidatesTags:["product"]
+            invalidatesTags: ["product"]
         }),
         allFarmerProducts: builder.query({
             query: (id) => `allfarmerproducts?id=${id}`,
-            providesTags:["product"]
+            providesTags: ["product"]
+        }),
+        allProducts: builder.mutation({
+            query: ({ userCoordinates, userId }) => ({
+                url: `/all?id=${userId}`,
+                method:'POST',
+                body: { userCoordinates }
+            })
         }),
         updateProduct: builder.mutation({
             query: ({ product, userId }) => {
@@ -30,7 +38,7 @@ export const productAPI = createApi({
                     body: product
                 }
             },
-            invalidatesTags:["product"]
+            invalidatesTags: ["product"]
         }),
         deleteProduct: builder.mutation({
             query: ({ productId, userId }) => {
@@ -39,9 +47,9 @@ export const productAPI = createApi({
                     method: 'DELETE'
                 }
             },
-            invalidatesTags:["product"]
+            invalidatesTags: ["product"]
         })
-        
+
     })
 });
 export const getProduct = async (id) => {
@@ -52,4 +60,4 @@ export const getProduct = async (id) => {
         return error;
     }
 }
-export const { useNewProductMutation, useAllFarmerProductsQuery, useUpdateProductMutation, useDeleteProductMutation } = productAPI
+export const { useAllProductsMutation, useNewProductMutation, useAllFarmerProductsQuery, useUpdateProductMutation, useDeleteProductMutation } = productAPI

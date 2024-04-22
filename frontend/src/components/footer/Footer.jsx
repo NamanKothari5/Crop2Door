@@ -6,9 +6,8 @@ function Footer() {
   const context = useContext(myContext);
   const { mode } = context;
   return (
-    <div>
       <footer
-        className="text-green-600 body-font bg-green-300"
+        className="text-green-600 body-font bg-green-300 bottom-0"
         style={{
           backgroundColor: mode === "dark" ? "rgb(46 49 55)" : "",
           color: mode === "dark" ? "white" : "",
@@ -50,7 +49,6 @@ function Footer() {
           </div>
         </div>
       </footer>
-    </div>
   );
 }
 
