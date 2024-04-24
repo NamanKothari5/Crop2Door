@@ -3,7 +3,7 @@ import myContext from "../../context/data/myContext";
 import Layout from "../../components/layout/Layout";
 import Modal from "../../components/modal/Modal";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteFromCart } from "../../redux/cartSlice";
+import { deleteFromCart, updateCart } from "../../redux/cartSlice";
 import { toast } from "react-toastify";
 import { addDoc, collection } from "firebase/firestore";
 import { fireDB } from "../../fireabase/FirebaseConfig";
@@ -17,7 +17,9 @@ function Cart() {
 
   const cartItems = useSelector((state) => state.cart);
   
-
+  const updateCartHandler = (item) => {
+    dispatch(updateCart(item));
+  }
   const deleteCart = (item) => {
     dispatch(deleteFromCart(item));
     toast.success("Delete cart");
@@ -32,10 +34,9 @@ function Cart() {
   useEffect(() => {
     let temp = 0;
     cartItems.forEach((cartItem) => {
-      temp = temp + parseInt(productDetails[cartItem].price);
+      temp = temp + parseInt(cartItem.price) * cartItem.quantity;
     });
     setTotalAmount(temp);
-    
   }, [cartItems]);
 
   const shipping = parseInt(100);
@@ -50,7 +51,7 @@ function Cart() {
   const [address, setAddress] = useState("");
   const [pincode, setPincode] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
-
+  
   const buyNow = async () => {
     if (name === "" || address == "" || pincode == "" || phoneNumber == "") {
       return toast.error("All fields are required", {
@@ -134,8 +135,10 @@ function Cart() {
         <div className="mx-auto max-w-5xl justify-center px-6 md:flex md:space-x-6 xl:px-0 ">
           <div className="rounded-lg md:w-2/3 ">
             {cartItems.map((item, index) => {
-
-              const price = productDetails[item].price, description = productDetails[item].description, imageUrl = productDetails[item].imageUrl, quantity = productDetails[item].quantity;
+              const price = item.price,
+                description = item.description,
+                imageUrl = item.imageUrl,
+                quantity = item.quantity;
 
               return (
                 <div
@@ -171,21 +174,78 @@ function Cart() {
                         ₹{price}
                       </p>
                       <p>
-                      <label for="quantity-input" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Choose quantity:</label>
-    <div class="relative flex items-center max-w-[8rem]">
-        <button type="button" id="decrement-button" data-input-counter-decrement="quantity-input" class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-s-lg p-3 h-11 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
-            <svg class="w-3 h-3 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16"/>
-            </svg>
-        </button>
-        <input type="text" id="quantity-input" data-input-counter aria-describedby="helper-text-explanation" class="bg-gray-50 border-x-0 border-gray-300 h-11 text-center text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full py-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="999" required />
-        <button type="button" id="increment-button" data-input-counter-increment="quantity-input" class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-e-lg p-3 h-11 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none">
-            <svg class="w-3 h-3 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
-            </svg>
-        </button>
-    </div>
-    <p id="helper-text-explanation" class="mt-2 text-sm text-gray-500 dark:text-gray-400">Please select a 5 digit number from 0 to 9.</p>
+                        <label
+                          for="quantity-input"
+                          class="block mb-2 text-sm font-medium text-green-900 dark:text-white"
+                        >
+                          Choose quantity:
+                        </label>
+                        <div class="relative flex items-center max-w-[8rem]">
+                          <button
+                            type="button"
+                            onClick={()=>updateCartHandler({...item,quantity:Number(quantity) - 1})}
+                            id="decrement-button"
+                            data-input-counter-decrement="quantity-input"
+                            class="bg-green-100 dark:bg-green-700 dark:hover:bg-green-600 dark:border-green-600 hover:bg-green-200 border border-green-300 rounded-s-lg p-3 h-11 focus:ring-green-100 dark:focus:ring-green-700 focus:ring-2 focus:outline-none"
+                          >
+                            <svg
+                              class="w-3 h-3 text-green-900 dark:text-white"
+                              aria-hidden="true"
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 18 2"
+                            >
+                              <path
+                                stroke="currentColor"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M1 1h16"
+                              />
+                            </svg>
+                          </button>
+                          <input
+                            type="number"
+                            id="quantity-input"
+                            data-input-counter
+                            aria-describedby="helper-text-explanation"
+                            class="bg-green-50 border-x-0 border-green-300 h-11 text-center text-green-900 text-sm focus:ring-green-500 focus:border-green-500 block w-full py-2.5 dark:bg-green-700 dark:border-green-600 dark:placeholder-green-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
+                            placeholder = "Qty"
+                            onChange={(e) => updateCartHandler({ ...item, quantity: e.target.value })}
+                            min={100}
+                            value={quantity}
+                            required
+                          />
+                          <button
+                            type="button"
+                            id="increment-button"
+                            data-input-counter-increment="quantity-input"
+                            class="bg-green-100 dark:bg-green-700 dark:hover:bg-green-600 dark:border-green-600 hover:bg-green-200 border border-green-300 rounded-e-lg p-3 h-11 focus:ring-green-100 dark:focus:ring-green-700 focus:ring-2 focus:outline-none"
+                            onClick={()=>updateCartHandler({...item,quantity:Number(quantity) + 1})}
+                          >
+                            <svg
+                              class="w-3 h-3 text-green-900 dark:text-white"
+                              aria-hidden="true"
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 18 18"
+                            >
+                              <path
+                                stroke="currentColor"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M9 1v16M1 9h16"
+                              />
+                            </svg>
+                          </button>
+                        </div>
+                        <p
+                          id="helper-text-explanation"
+                          class="mt-2 text-sm text-green-500 dark:text-green-400"
+                        >
+                          Please select a order quantity above 50.
+                        </p>
                       </p>
                     </div>
                     <div
