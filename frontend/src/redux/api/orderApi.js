@@ -13,7 +13,6 @@ export const orderAPI = createApi({
                     url: `new/?id=${id}`,
                     method: "POST",
                     body: orderItems,
-
                 }
             },
         })

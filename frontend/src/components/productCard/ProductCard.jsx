@@ -40,10 +40,8 @@ function ProductCard() {
   }, [user]);
 
   const dispatch = useDispatch();
-  const cartItems = useSelector((state) => state.cart);
 
   const addCart = (product) => {
-    console.log(product);
     dispatch(addToCart(product));
     toast.success("add to cart");
   };

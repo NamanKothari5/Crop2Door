@@ -26,6 +26,14 @@ const orderSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    finalPath: [{
+        type: [String],
+        required: true
+    }],
+    min_dist: {
+        type: Number,
+        required: true
+    },
     date: {
         type: String,
         required: [true, "Please enter date"],

@@ -173,7 +173,10 @@ module.exports.findCluster = (v, clusters) => {
         }
       }
     }
-
+    /*
+    node->next cost=wt
+    f(next,nextMask,dist)=f(node,mask,dist)+wt(1+(1/proportion of produce sold))
+    */
     if (currAns < res) {
       res = currAns;
       finalPath = thisPath.map((k) => cluster[k]);

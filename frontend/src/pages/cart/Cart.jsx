@@ -16,7 +16,7 @@ function Cart() {
   const dispatch = useDispatch();
 
   const cartItems = useSelector((state) => state.cart);
-  
+
   const updateCartHandler = (item) => {
     dispatch(updateCart(item));
   }
@@ -51,7 +51,7 @@ function Cart() {
   const [address, setAddress] = useState("");
   const [pincode, setPincode] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
-  
+
   const buyNow = async () => {
     if (name === "" || address == "" || pincode == "" || phoneNumber == "") {
       return toast.error("All fields are required", {
@@ -159,7 +159,7 @@ function Cart() {
                         className="text-lg font-bold text-green-900"
                         style={{ color: mode === "dark" ? "white" : "" }}
                       >
-                        {name}
+                        {item.name}
                       </h2>
                       <h2
                         className="text-sm  text-green-900"
@@ -183,7 +183,7 @@ function Cart() {
                         <div class="relative flex items-center max-w-[8rem]">
                           <button
                             type="button"
-                            onClick={()=>updateCartHandler({...item,quantity:Number(quantity) - 1})}
+                            onClick={() => updateCartHandler({ ...item, quantity: Number(quantity) - 1 })}
                             id="decrement-button"
                             data-input-counter-decrement="quantity-input"
                             class="bg-green-100 dark:bg-green-700 dark:hover:bg-green-600 dark:border-green-600 hover:bg-green-200 border border-green-300 rounded-s-lg p-3 h-11 focus:ring-green-100 dark:focus:ring-green-700 focus:ring-2 focus:outline-none"
@@ -210,7 +210,7 @@ function Cart() {
                             data-input-counter
                             aria-describedby="helper-text-explanation"
                             class="bg-green-50 border-x-0 border-green-300 h-11 text-center text-green-900 text-sm focus:ring-green-500 focus:border-green-500 block w-full py-2.5 dark:bg-green-700 dark:border-green-600 dark:placeholder-green-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
-                            placeholder = "Qty"
+                            placeholder="Qty"
                             onChange={(e) => updateCartHandler({ ...item, quantity: e.target.value })}
                             min={100}
                             value={quantity}
@@ -221,7 +221,7 @@ function Cart() {
                             id="increment-button"
                             data-input-counter-increment="quantity-input"
                             class="bg-green-100 dark:bg-green-700 dark:hover:bg-green-600 dark:border-green-600 hover:bg-green-200 border border-green-300 rounded-e-lg p-3 h-11 focus:ring-green-100 dark:focus:ring-green-700 focus:ring-2 focus:outline-none"
-                            onClick={()=>updateCartHandler({...item,quantity:Number(quantity) + 1})}
+                            onClick={() => updateCartHandler({ ...item, quantity: Number(quantity) + 1 })}
                           >
                             <svg
                               class="w-3 h-3 text-green-900 dark:text-white"
@@ -326,17 +326,15 @@ function Cart() {
               </div>
             </div>
             {/* <Modal  /> */}
-            <Modal
-              name={name}
-              address={address}
-              pincode={pincode}
-              phoneNumber={phoneNumber}
-              setName={setName}
-              setAddress={setAddress}
-              setPincode={setPincode}
-              setPhoneNumber={setPhoneNumber}
-              buyNow={buyNow}
-            />
+            <div className="  text-center rounded-lg text-white font-bold">
+              <button
+                type="button"
+                // onClick={openModal}
+                className="w-full  bg-violet-600 py-2 text-center rounded-lg text-white font-bold "
+              >
+                Buy Now
+              </button>
+            </div>
           </div>
         </div>
       </div>

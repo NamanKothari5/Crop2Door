@@ -28,19 +28,7 @@ module.exports.newOrder = TryCatch(async (req, res, next) => {
   const month = date.getMonth() + 1;
   const year = date.getFullYear();
 
-  const currentDate = `${day}-${month}-${year}`;
-  const order = await Order.create({
-    user: id,
-    orderItems,
-    totalPrice,
-    date: currentDate,
-  });
-
   const user = await User.findById(id);
-  user.orders.push(order._id);
-  await user.save();
-
-  
 
   const coordinates = user.coordinates;
 
@@ -71,8 +59,6 @@ module.exports.newOrder = TryCatch(async (req, res, next) => {
     if (distances[idx] <= 200000) validFarms.push(allFarms[idx - 1]);
   }
 
-  
-
   let produce = validFarms.map((e) => {
     return {};
   });
@@ -87,7 +73,7 @@ module.exports.newOrder = TryCatch(async (req, res, next) => {
   let allClusters = [];
   let currCluster = [validFarms.length];
 
-  for(const crop in requiredProducts)
+  for (const crop in requiredProducts)
     currClusterQuantity[crop] = 0;
 
   const addresses = validFarms.map((farm) => farm.coordinates);
@@ -119,36 +105,31 @@ module.exports.newOrder = TryCatch(async (req, res, next) => {
     allClusters
   );
 
-  
+
 
   let { min_dist, finalPath } = findCluster(distances, allClusters);
 
-  finalPath=finalPath.map((idx)=>{
-    if(idx<validFarms.length){
-        const farm = validFarms[idx];
-        return {"pincode":farm.pincode,"address":farm.address};
+  finalPath = finalPath.map((idx) => {
+    if (idx < validFarms.length) {
+      const farm = validFarms[idx];
+      return { "pincode": farm.pincode, "address": farm.address, "coordinates": farm.coordinates };
     }
-    else{
-        return {"pincode":user.pincode,"address":user.address};
+    else {
+      return { "pincode": user.pincode, "address": user.address, "coordinates": user.coordinates };
     }
   });
 
-  
-//   for (farmIdx in finalPath) {
-//     if (farmIdx < validFarms.length) {
-//       const farmProducts = validFarms[farmIdx].products;
-
-//       farmProducts.forEach(async (productId) => {
-//         const product = await Product.findById(productId);
-//         if(product.name in requiredProducts && requiredProducts[product.name] > 0){
-//             const currQuantity = Math.min(product.stock, requiredProducts[product.name]);
-//             product.stock -= currQuantity;
-//             requiredProducts[product.name] -= currQuantity;
-//             await product.save();
-//         }
-//       });
-//     }
-//   }
+  const currentDate = `${day}-${month}-${year}`;
+  const order = await Order.create({
+    user: id,
+    orderItems,
+    totalPrice,
+    finalPath: finalPath.map((location) => location.coordinates),
+    min_dist,
+    date: currentDate,
+  });
+  user.orders.push(order._id);
+  await user.save();
 
   return res.status(200).json({
     success: true,
@@ -158,7 +139,7 @@ module.exports.newOrder = TryCatch(async (req, res, next) => {
   });
 });
 
-module.exports.myOrders = TryCatch(async (req, res, nect) => {
+module.exports.myOrders = TryCatch(async (req, res, next) => {
   const { id } = req.query;
   const user = await User.findById(id).populate("orders");
 

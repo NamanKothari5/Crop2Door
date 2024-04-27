@@ -6,7 +6,8 @@ import Loader from "../../components/loader/Loader";
 function Order() {
   const userid = JSON.parse(localStorage.getItem("user")).user.uid;
   const context = useContext(myContext);
-  const { mode, loading, order } = context;
+  const { mode, loading, r } = context;
+  const order=[]
   return (
     <Layout>
       {loading && <Loader />}
@@ -72,7 +73,7 @@ function Order() {
           </div>
         </>
       ) : (
-        <h2 className=" text-center tex-2xl text-white">Not Order</h2>
+        <h2 className=" text-center tex-2xl text-white">No Order</h2>
       )}
     </Layout>
   );

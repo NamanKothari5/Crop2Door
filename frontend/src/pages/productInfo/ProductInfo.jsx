@@ -20,24 +20,6 @@ function ProductInfo() {
   const [searchParams]=useSearchParams();
   const productName=searchParams.get('name');
   const stock=searchParams.get('quantity');
-  // const getProductData = async () => {
-  //   setLoading(true);
-  //   try {
-  //     const productTemp = await getDoc(doc(fireDB, "products", params.id));
-  //     // console.log(productTemp)
-  //     setProducts(productTemp.data());
-  //     // console.log(productTemp.data())
-  //     setLoading(false);
-  //   } catch (error) {
-  //     console.log(error);
-  //     setLoading(false);
-  //   }
-  // };
-
-  // useEffect(() => {
-    
-  //   getProductData();
-  // }, []);
 
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart);
@@ -73,7 +55,13 @@ function ProductInfo() {
                     1kg @₹{productDetails[productName].price}
                   </span>
                   <button
-                    onClick={() => addCart(productName)}
+                    onClick={() =>
+                      addCart({
+                        ...productDetails[productName],
+                        name: productName,
+                        quantity: 50,
+                      })
+                    }
                     className="flex ml-auto text-white bg-green-500 border-0 py-2 px-6 focus:outline-none hover:bg-green-600 rounded"
                   >
                     Add To Cart

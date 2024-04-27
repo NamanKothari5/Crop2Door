@@ -107,7 +107,13 @@ function Allproducts() {
                         <div className=" flex justify-center">
                           <button
                             type="button"
-                            onClick={() => addCart(item)}
+                            onClick={() =>
+                              addCart({
+                                ...productDetails[item],
+                                name: item,
+                                quantity: 50,
+                              })
+                            }
                             className="focus:outline-none text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm w-full  py-2"
                           >
                             Add To Cart
