@@ -7,16 +7,16 @@ export const orderAPI = createApi({
         baseUrl: `${import.meta.env.VITE_APP_SERVER}/api/order/`,
     }),
     endpoints: (builder) => ({
-        newProduct: builder.mutation({
-            query: ({ id, orderItems }) => {
+        newOrder: builder.mutation({
+            query: ({ id, orderItems,paymentID }) => {
                 return {
                     url: `new/?id=${id}`,
                     method: "POST",
-                    body: orderItems,
+                    body: {orderItems,paymentID},
                 }
             },
         })
     })
 });
 
-export const { useNewProductMutation } = orderAPI
+export const { useNewOrderMutation } = orderAPI

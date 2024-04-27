@@ -8,7 +8,7 @@ const { generateClusters, findCluster } = require("../utils/mapBoxUtils");
 
 module.exports.newOrder = TryCatch(async (req, res, next) => {
   const { id } = req.query;
-  const { orderItems } = req.body;
+  const { orderItems, paymentID } = req.body;
 
   let totalPrice = 0;
   let requiredProducts = {};
@@ -23,6 +23,7 @@ module.exports.newOrder = TryCatch(async (req, res, next) => {
   }, {});
 
   // console.log(products)
+
   const date = new Date();
   const day = date.getDate();
   const month = date.getMonth() + 1;
@@ -73,8 +74,7 @@ module.exports.newOrder = TryCatch(async (req, res, next) => {
   let allClusters = [];
   let currCluster = [validFarms.length];
 
-  for (const crop in requiredProducts)
-    currClusterQuantity[crop] = 0;
+  for (const crop in requiredProducts) currClusterQuantity[crop] = 0;
 
   const addresses = validFarms.map((farm) => farm.coordinates);
   addresses.push(coordinates);
@@ -105,17 +105,35 @@ module.exports.newOrder = TryCatch(async (req, res, next) => {
     allClusters
   );
 
-
-
   let { min_dist, finalPath } = findCluster(distances, allClusters);
-
+  // for (farmIdx in finalPath) {
+  //     if (farmIdx < validFarms.length) {
+  //       const farmProducts = validFarms[farmIdx].products;
+  //       farmProducts.forEach(async (productId) => {
+  //         const product = await Product.findById(productId);
+  //         if(product.name in requiredProducts && requiredProducts[product.name] > 0){
+  //             const currQuantity = Math.min(product.stock, requiredProducts[product.name]);
+  //             product.stock -= currQuantity;
+  //             requiredProducts[product.name] -= currQuantity;
+  //             await product.save();
+  //         }
+  //       });
+  //     }
+  //   }
   finalPath = finalPath.map((idx) => {
     if (idx < validFarms.length) {
       const farm = validFarms[idx];
-      return { "pincode": farm.pincode, "address": farm.address, "coordinates": farm.coordinates };
-    }
-    else {
-      return { "pincode": user.pincode, "address": user.address, "coordinates": user.coordinates };
+      return {
+        pincode: farm.pincode,
+        address: farm.address,
+        coordinates: farm.coordinates,
+      };
+    } else {
+      return {
+        pincode: user.pincode,
+        address: user.address,
+        coordinates: user.coordinates,
+      };
     }
   });
 
@@ -127,15 +145,17 @@ module.exports.newOrder = TryCatch(async (req, res, next) => {
     finalPath: finalPath.map((location) => location.coordinates),
     min_dist,
     date: currentDate,
+    paymentID,
   });
   user.orders.push(order._id);
   await user.save();
-
+  
   return res.status(200).json({
     success: true,
     message: "Order Created Successfully",
     finalPath,
-    min_dist
+    min_dist,
+    paymentID,
   });
 });
 
@@ -146,5 +166,15 @@ module.exports.myOrders = TryCatch(async (req, res, next) => {
   return res.status(200).json({
     success: true,
     orders: user.orders,
+  });
+});
+
+module.exports.getPath = TryCatch(async (req, res, next) => {
+  const { id } = req.params;
+  const order = await Order.findById(id);
+
+  return res.status(200).json({
+    success: true,
+    finalPath: order.finalPath,
   });
 });

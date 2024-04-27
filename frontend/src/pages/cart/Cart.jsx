@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 import { addDoc, collection } from "firebase/firestore";
 import { fireDB } from "../../fireabase/FirebaseConfig";
 import { productDetails } from "../../assets/productDetails";
-
+import { useNewOrderMutation } from "../../redux/api/orderApi";
 function Cart() {
   const context = useContext(myContext);
   const { mode } = context;
@@ -16,6 +16,8 @@ function Cart() {
   const dispatch = useDispatch();
 
   const cartItems = useSelector((state) => state.cart);
+  const {user}=useSelector((state)=>state.userReducer);
+  const [newOrder]= useNewOrderMutation();
 
   const updateCartHandler = (item) => {
     dispatch(updateCart(item));
@@ -47,80 +49,32 @@ function Cart() {
    *!                           Payment Intigration
    *========================================================================**/
 
-  const [name, setName] = useState("");
-  const [address, setAddress] = useState("");
-  const [pincode, setPincode] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-
   const buyNow = async () => {
-    if (name === "" || address == "" || pincode == "" || phoneNumber == "") {
-      return toast.error("All fields are required", {
-        position: "top-center",
-        autoClose: 1000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-      });
-    }
-
-    const addressInfo = {
-      name,
-      address,
-      pincode,
-      phoneNumber,
-      date: new Date().toLocaleString("en-US", {
-        month: "short",
-        day: "2-digit",
-        year: "numeric",
-      }),
-    };
-
     var options = {
-      key: "",
-      key_secret: "",
+      key: "rzp_test_uzZGM1K5pSN3tx",
+      key_secret: "Oa92GRUpEAtwZkM9GANVsHLS",
       amount: parseInt(grandTotal * 100),
       currency: "INR",
-      order_receipt: "order_rcptid_" + name,
+      order_receipt: "order_rcptid_" + user.name,
       name: "Crop2Door",
       description: "for testing purpose",
-      handler: function (response) {
-        console.log(response);
+      handler: async function (response) {
         toast.success("Payment Successful");
-
-        const paymentId = response.razorpay_payment_id;
-
-        const orderInfo = {
-          cartItems,
-          addressInfo,
-          date: new Date().toLocaleString("en-US", {
-            month: "short",
-            day: "2-digit",
-            year: "numeric",
-          }),
-          email: JSON.parse(localStorage.getItem("user")).user.email,
-          userid: JSON.parse(localStorage.getItem("user")).user.uid,
-          paymentId,
-        };
-
-        try {
-          const orderRef = collection(fireDB, "order");
-          addDoc(orderRef, orderInfo);
-        } catch (error) {
-          console.log(error);
+        const paymentID = response.razorpay_payment_id;
+        const res=await newOrder({id:user._id,paymentID,orderItems:cartItems});
+        if ("data" in res) {
+          toast.success("Order created successfully");
         }
       },
-
       theme: {
-        color: "#3399cc",
+        color: "#027148",
       },
     };
 
     var pay = new window.Razorpay(options);
     pay.open();
-    console.log(pay);
+    
+    
   };
   return (
     <Layout>
@@ -329,8 +283,8 @@ function Cart() {
             <div className="  text-center rounded-lg text-white font-bold">
               <button
                 type="button"
-                // onClick={openModal}
-                className="w-full  bg-violet-600 py-2 text-center rounded-lg text-white font-bold "
+                onClick={buyNow}
+                className="w-full  bg-green-600 py-2 text-center rounded-lg text-white font-bold "
               >
                 Buy Now
               </button>

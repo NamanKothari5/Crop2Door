@@ -37,6 +37,10 @@ const orderSchema = new mongoose.Schema({
     date: {
         type: String,
         required: [true, "Please enter date"],
+    },
+    paymentID:{
+        type: String,
+        required:true
     }
 });
 
