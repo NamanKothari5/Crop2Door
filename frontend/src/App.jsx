@@ -26,7 +26,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './fireabase/FirebaseConfig';
 import { userExist, userNotExist } from './redux/reducer/userReducer';
 import { getUser } from './redux/api/userApi';
-import { productDetails } from './assets/productDetails';
+import Map from './pages/Map/Map';
 
 function App() {
   const { user, loading } = useSelector(
@@ -58,6 +58,11 @@ function App() {
           <Route path="/order" element={
             <ProtectedRoute user={user}>
               <Order />
+            </ProtectedRoute>
+          } />
+          <Route path="/order/:id" element={
+            <ProtectedRoute user={user}>
+              <Map/>
             </ProtectedRoute>
           } />
           <Route path="/cart" element={<Cart />} />
@@ -109,6 +114,7 @@ const ProtectedRouteForFarmer = (props) => {
     return props.children
   }
   else {
+    
     return <Navigate to={'/login'} state={{ prevPath: location.pathname }} />
   }
 

@@ -5,9 +5,7 @@ import Modal from "../../components/modal/Modal";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteFromCart, updateCart } from "../../redux/cartSlice";
 import { toast } from "react-toastify";
-import { addDoc, collection } from "firebase/firestore";
-import { fireDB } from "../../fireabase/FirebaseConfig";
-import { productDetails } from "../../assets/productDetails";
+
 import { useNewOrderMutation } from "../../redux/api/orderApi";
 function Cart() {
   const context = useContext(myContext);
@@ -16,8 +14,8 @@ function Cart() {
   const dispatch = useDispatch();
 
   const cartItems = useSelector((state) => state.cart);
-  const {user}=useSelector((state)=>state.userReducer);
-  const [newOrder]= useNewOrderMutation();
+  const { user } = useSelector((state) => state.userReducer);
+  const [newOrder] = useNewOrderMutation();
 
   const updateCartHandler = (item) => {
     dispatch(updateCart(item));
@@ -61,7 +59,7 @@ function Cart() {
       handler: async function (response) {
         toast.success("Payment Successful");
         const paymentID = response.razorpay_payment_id;
-        const res=await newOrder({id:user._id,paymentID,orderItems:cartItems});
+        const res = await newOrder({ id: user._id, paymentID, orderItems: cartItems });
         if ("data" in res) {
           toast.success("Order created successfully");
         }
@@ -73,8 +71,11 @@ function Cart() {
 
     var pay = new window.Razorpay(options);
     pay.open();
-    
-    
+    // const res = await newOrder({ id: user._id, paymentID:'abc', orderItems: cartItems });
+    // if ("data" in res) {
+    //   toast.success("Order created successfully");
+    // }
+
   };
   return (
     <Layout>

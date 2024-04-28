@@ -6,7 +6,7 @@ const { newFarm, getSingleFarm, deleteFarm, getAllFarms, getAllOrdersOnFarm } = 
 app.post("/new", newFarm);
 app.get("/:id", getSingleFarm);
 app.get("/all", getAllFarms);
-app.get('/allOrders/:id', getAllOrdersOnFarm);
+
 app.delete("/:id", deleteFarm);
 
 module.exports = app;

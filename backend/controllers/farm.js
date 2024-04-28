@@ -74,13 +74,3 @@ module.exports.deleteFarm = TryCatch(async (req, res, next) => {
     });
 })
 
-module.exports.getAllOrdersOnFarm = TryCatch(async (req, res, next) => {
-    const id = req.params.id;
-    const farm = await Farm.findById(id);
-    if(!farm) return next(new CustomError("Farm Not Found", 404));
-
-    return res.status(200).json({
-        success: true,
-        orders: farm.orders
-    })
-})

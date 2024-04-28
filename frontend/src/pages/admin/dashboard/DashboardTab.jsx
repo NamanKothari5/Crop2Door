@@ -10,23 +10,18 @@ import { useNavigate } from "react-router-dom";
 import { store } from "../../../redux/store";
 import { useAllFarmerProductsQuery, useDeleteProductMutation } from "../../../redux/api/productApi";
 import { toast } from 'react-toastify';
-import {productDetails} from '../../../assets/productDetails'
+import { productDetails } from '../../../assets/productDetails'
 function DashboardTab() {
   const context = useContext(myContext);
   const user = store.getState().userReducer.user;
   const { data, isLoading } = useAllFarmerProductsQuery(user._id);
-  const [products,setProducts]=useState([]);
   const { mode, product, order } = context;
   const navigate = useNavigate();
-  let [isOpen, setIsOpen] = useState(false);
-  function closeModal() {
-    setIsOpen(false);
-  }
   const [deleteProduct] = useDeleteProductMutation();
   function openModal() {
     setIsOpen(true);
   }
-  const deleteHandler = async(id) => {
+  const deleteHandler = async (id) => {
     const res = await deleteProduct({ productId: id, userId: user._id });
     if ("data" in res) {
       toast.success("Product Deleted successfully");

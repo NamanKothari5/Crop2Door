@@ -28,7 +28,6 @@ function Allproducts() {
           const products = res.data.products;
           setAllProductsDetails(products);
           setProductNameList(Object.keys(products));
-
         }
       }
     }

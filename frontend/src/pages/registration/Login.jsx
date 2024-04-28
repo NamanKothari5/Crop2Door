@@ -90,7 +90,6 @@ const LoginPage = () => {
                             </svg>
                             <span>Signup with Google</span>
                         </button>
-
                     </form>
                 </div>
 

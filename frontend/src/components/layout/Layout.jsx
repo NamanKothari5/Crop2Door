@@ -2,15 +2,15 @@ import React from 'react'
 import Navbar from '../navbar/Navbar'
 import Footer from '../footer/Footer'
 
-function Layout({children}) {
+function Layout({ children }) {
   return (
-    <>
-        <Navbar/>
-        <div className="content">
-            {children}
-        </div>
-        <Footer/>
-    </>
+    <div class="flex flex-col h-screen">
+      <Navbar />
+      <main class="mb-auto">
+        {children}
+      </main>
+      <Footer />
+    </div>
   )
 }
 
