@@ -1,192 +1,185 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { useGetPathQuery } from '../../redux/api/orderApi';
-import mapboxgl from 'mapbox-gl';
-import 'mapbox-gl/dist/mapbox-gl.css';
-import turf from 'turf'; // Importing turf is unnecessary if you're not using it in this component
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import { useGetPathQuery } from "../../redux/api/orderApi";
+import mapboxgl from "mapbox-gl";
+import "mapbox-gl/dist/mapbox-gl.css";
+import turf from "turf"; // Importing turf is unnecessary if you're not using it in this component
 const getPath = async (points) => {
+  const baseURl = "https://api.mapbox.com";
+  const token =
+    "pk.eyJ1IjoibmlzaHRhbiIsImEiOiJja3ZkcGNmZWg0d25wMm5xd2RkcDBzeHVsIn0.irJll1qHLs4XBFONtsVYFA";
+  const query = points.map((coord) => coord.join(",")).join(";");
 
-    const baseURl = 'https://api.mapbox.com'
-    const token = 'pk.eyJ1IjoibmlzaHRhbiIsImEiOiJja3ZkcGNmZWg0d25wMm5xd2RkcDBzeHVsIn0.irJll1qHLs4XBFONtsVYFA'
-    const query = points.map((coord) => coord.join(',')).join(';');
+  const response = await fetch(
+    `${baseURl}/directions/v5/mapbox/driving/${query}?annotations=distance&geometries=geojson&steps=true&language=en&overview=full&access_token=${token}`
+  );
+  if (response.ok) {
+    const jsonData = await response.json();
+    const path = [];
+    jsonData.routes[0].legs.forEach((leg) => {
+      leg.steps.forEach((step) => {
+        path.push(...step.geometry.coordinates);
+      });
+    });
+    return path;
+  } else throw Error("Error retrieving coordinates");
+};
+const Map = (props) => {
+  const id = props.orderID;
+  const { data } = useGetPathQuery(id);
 
-    const response = await fetch(`${baseURl}/directions/v5/mapbox/driving/${query}?annotations=distance&geometries=geojson&steps=true&language=en&overview=full&access_token=${token}`);
-    if (response.ok) {
-        const jsonData = await response.json();
-        const path = [];
-        jsonData.routes[0].legs.forEach(leg => {
-            leg.steps.forEach(step => {
-                path.push(...step.geometry.coordinates);
-            });
+  useEffect(() => {
+    if (data) {
+      mapboxgl.accessToken =
+        "pk.eyJ1IjoibmlzaHRhbiIsImEiOiJja3ZkcGNmZWg0d25wMm5xd2RkcDBzeHVsIn0.irJll1qHLs4XBFONtsVYFA";
+      const initializeMap = async () => {
+        const points = data.finalPath;
+
+        const map = new mapboxgl.Map({
+          container: "map",
+          style: "mapbox://styles/mapbox/streets-v12",
+          center: points[0],
+          zoom: 10,
         });
-        return path
+
+        const path = await getPath(points);
+
+        const dataProperties = {
+          type: "FeatureCollection",
+          features: [],
+        };
+        dataProperties.features.push({
+          type: "Feature",
+          geometry: {
+            type: "LineString",
+            coordinates: path,
+          },
+        });
+
+        points.slice(0, -1).forEach((point) => {
+          dataProperties.features.push({
+            type: "Feature",
+            geometry: {
+              type: "Point",
+              coordinates: point,
+            },
+          });
+        });
+
+        map.on("load", () => {
+          map.addSource("route", {
+            type: "geojson",
+            data: dataProperties,
+          });
+          map.addLayer({
+            id: "route",
+            type: "line",
+            source: "route",
+            layout: {
+              "line-join": "round",
+              "line-cap": "round",
+            },
+            paint: {
+              "line-color": "blue",
+              "line-width": 8,
+            },
+          });
+
+          map.addLayer({
+            id: "pickup-points",
+            type: "circle",
+            source: "route",
+            paint: {
+              "circle-radius": 12,
+              "circle-color": "#B42222",
+            },
+            filter: ["==", "$type", "Point"],
+          });
+        });
+
+        const lastPoint = points[points.length - 1];
+
+        map.addLayer({
+          id: "last-point",
+          type: "circle",
+          source: {
+            type: "geojson",
+            data: {
+              type: "Feature",
+              properties: {},
+              geometry: {
+                type: "Point",
+                coordinates: lastPoint,
+              },
+            },
+          },
+          paint: {
+            "circle-radius": 12,
+            "circle-color": "#00FF00", // Different color for the last point
+          },
+        });
+        // map.on('load', () => {
+        //     const animationDuration = 100000;
+        //     const cameraAltitude = 1600;
+        //     const routeDistance = turf.lineDistance(turf.lineString(path));
+        //     const cameraRouteDistance = turf.lineDistance(
+        //         turf.lineString(path)
+        //     );
+
+        //     let start;
+
+        //     function frame(time) {
+        //         if (!start) start = time;
+
+        //         const phase = (time - start) / animationDuration;
+
+        //         if (phase > 1) {
+
+        //             setTimeout(() => {
+        //                 start = 0.0;
+        //             }, 1500);
+        //         }
+
+        //         const alongRoute = turf.along(
+        //             turf.lineString(path),
+        //             routeDistance * phase
+        //         ).geometry.coordinates;
+
+        //         const alongCamera = turf.along(
+        //             turf.lineString(path),
+        //             cameraRouteDistance * phase
+        //         ).geometry.coordinates;
+
+        //         const camera = map.getFreeCameraOptions();
+
+        //         camera.position = mapboxgl.MercatorCoordinate.fromLngLat(
+        //             {
+        //                 lng: alongCamera[0],
+        //                 lat: alongCamera[1]
+        //             },
+        //             cameraAltitude
+        //         );
+
+        //         camera.lookAtPoint({
+        //             lng: alongRoute[0],
+        //             lat: alongRoute[1]
+        //         });
+
+        //         map.setFreeCameraOptions(camera);
+
+        //         window.requestAnimationFrame(frame);
+        //     }
+
+        //     window.requestAnimationFrame(frame);
+        // });
+        return () => map.remove();
+      };
+
+      initializeMap();
     }
-    else
-        throw Error("Error retrieving coordinates");
-}
-const Map = () => {
-    const { id } = useParams();
-    const { data } = useGetPathQuery(id);
+  }, [data]);
 
-
-    useEffect(() => {
-        if (data) {
-            mapboxgl.accessToken = 'pk.eyJ1IjoibmlzaHRhbiIsImEiOiJja3ZkcGNmZWg0d25wMm5xd2RkcDBzeHVsIn0.irJll1qHLs4XBFONtsVYFA';
-            const initializeMap = async () => {
-                const points = data.finalPath;
-
-                const map = new mapboxgl.Map({
-                    container: 'map',
-                    style: 'mapbox://styles/mapbox/streets-v12',
-                    center: points[0],
-                    zoom: 14
-                });
-
-                const path = await getPath(points);
-
-                const dataProperties = {
-                    'type': 'FeatureCollection',
-                    'features': []
-                }
-                dataProperties.features.push({
-                    'type': 'Feature',
-                    'geometry':
-                    {
-                        'type': 'LineString',
-                        'coordinates': path
-                    }
-                });
-
-                points.slice(0, -1).forEach(point => {
-                    dataProperties.features.push({
-                        'type': 'Feature',
-                        'geometry': {
-                            'type': 'Point',
-                            'coordinates': point
-                        }
-                    });
-                });
-
-                map.on('load', () => {
-                    map.addSource('route', {
-                        'type': 'geojson',
-                        'data': dataProperties,
-                    });
-                    map.addLayer({
-                        'id': 'route',
-                        'type': 'line',
-                        'source': 'route',
-                        'layout': {
-                            'line-join': 'round',
-                            'line-cap': 'round'
-                        },
-                        'paint': {
-                            'line-color': 'blue',
-                            'line-width': 8
-                        }
-                    });
-
-
-                    map.addLayer({
-                        'id': 'pickup-points',
-                        'type': 'circle',
-                        'source': 'route',
-                        'paint': {
-                            'circle-radius': 12,
-                            'circle-color': '#B42222'
-                        },
-                        'filter': ['==', '$type', 'Point']
-                    });
-
-
-                });
-
-                const lastPoint = points[points.length - 1];
-
-                map.addLayer({
-                    'id': 'last-point',
-                    'type': 'circle',
-                    'source': {
-                        'type': 'geojson',
-                        'data': {
-                            'type': 'Feature',
-                            'properties': {},
-                            'geometry': {
-                                'type': 'Point',
-                                'coordinates': lastPoint
-                            }
-                        }
-                    },
-                    'paint': {
-                        'circle-radius': 12,
-                        'circle-color': '#00FF00' // Different color for the last point
-                    }
-                });
-                // map.on('load', () => {
-                //     const animationDuration = 100000;
-                //     const cameraAltitude = 1600;
-                //     const routeDistance = turf.lineDistance(turf.lineString(path));
-                //     const cameraRouteDistance = turf.lineDistance(
-                //         turf.lineString(path)
-                //     );
-
-                //     let start;
-
-                //     function frame(time) {
-                //         if (!start) start = time;
-
-                //         const phase = (time - start) / animationDuration;
-
-                //         if (phase > 1) {
-
-                //             setTimeout(() => {
-                //                 start = 0.0;
-                //             }, 1500);
-                //         }
-
-                //         const alongRoute = turf.along(
-                //             turf.lineString(path),
-                //             routeDistance * phase
-                //         ).geometry.coordinates;
-
-                //         const alongCamera = turf.along(
-                //             turf.lineString(path),
-                //             cameraRouteDistance * phase
-                //         ).geometry.coordinates;
-
-                //         const camera = map.getFreeCameraOptions();
-
-                //         camera.position = mapboxgl.MercatorCoordinate.fromLngLat(
-                //             {
-                //                 lng: alongCamera[0],
-                //                 lat: alongCamera[1]
-                //             },
-                //             cameraAltitude
-                //         );
-
-                //         camera.lookAtPoint({
-                //             lng: alongRoute[0],
-                //             lat: alongRoute[1]
-                //         });
-
-                //         map.setFreeCameraOptions(camera);
-
-                //         window.requestAnimationFrame(frame);
-                //     }
-
-                //     window.requestAnimationFrame(frame);
-                // });
-                return () => map.remove();
-            };
-
-            initializeMap();
-        }
-    }, [data]);
-
-
-
-
-    return <div id="map" style={{ width: '100%', height: '100vh' }} />;
+  return <div id="map" style={{ width: "100%", height: "80vh" }} />;
 };
 
 export default Map;
