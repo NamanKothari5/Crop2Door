@@ -3,14 +3,15 @@ import myContext from "../../context/data/myContext";
 import Layout from "../../components/layout/Layout";
 import Modal from "../../components/modal/Modal";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteFromCart, updateCart } from "../../redux/cartSlice";
+import { deleteFromCart, deleteAllCart, updateCart } from "../../redux/cartSlice";
 import { toast } from "react-toastify";
 
 import { useNewOrderMutation } from "../../redux/api/orderApi";
+import { useNavigate } from "react-router-dom";
 function Cart() {
   const context = useContext(myContext);
   const { mode } = context;
-
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const cartItems = useSelector((state) => state.cart);
@@ -24,7 +25,6 @@ function Cart() {
     dispatch(deleteFromCart(item));
     toast.success("Delete cart");
   };
-
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cartItems));
   }, [cartItems]);
@@ -41,6 +41,7 @@ function Cart() {
 
   const shipping = parseInt(100);
   const grandTotal = (totalAmout >= 500 ? 0 : shipping) + totalAmout;
+
   // console.log(grandTotal)
 
   /**========================================================================
@@ -62,6 +63,8 @@ function Cart() {
         const res = await newOrder({ id: user._id, paymentID, orderItems: cartItems });
         if ("data" in res) {
           toast.success("Order created successfully");
+          dispatch(deleteAllCart());
+          navigate("/order");
         }
       },
       theme: {
@@ -80,7 +83,7 @@ function Cart() {
   return (
     <Layout>
       <div
-        className="h-screen bg-green-100 pt-5 mb-[60%] "
+        className="h-screen bg-white-100 pt-5 mb-[60%] "
         style={{
           backgroundColor: mode === "dark" ? "#282c34" : "",
           color: mode === "dark" ? "white" : "",
@@ -260,7 +263,7 @@ function Cart() {
                 className="text-green-700"
                 style={{ color: mode === "dark" ? "white" : "" }}
               >
-                ₹{shipping}
+                ₹{totalAmout >= 1000 ? 0 : shipping}
               </p>
             </div>
             <hr className="my-4" />

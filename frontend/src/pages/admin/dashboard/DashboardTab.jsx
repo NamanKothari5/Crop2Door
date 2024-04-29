@@ -11,10 +11,19 @@ import { store } from "../../../redux/store";
 import { useAllFarmerProductsQuery, useDeleteProductMutation } from "../../../redux/api/productApi";
 import { toast } from 'react-toastify';
 import { productDetails } from '../../../assets/productDetails'
+import { useGetFarmerOrderQuery } from "../../../redux/api/orderApi";
 function DashboardTab() {
   const context = useContext(myContext);
   const user = store.getState().userReducer.user;
   const { data, isLoading } = useAllFarmerProductsQuery(user._id);
+  const [orders, setOrders] = useState([]);
+  const ordersQuery = useGetFarmerOrderQuery(user.farm);
+  useEffect(() => {
+    console.log(ordersQuery.data);
+    if (ordersQuery.data)
+      setOrders(ordersQuery.data.orders);
+
+  }, [ordersQuery.status]);
   const { mode, product, order } = context;
   const navigate = useNavigate();
   const [deleteProduct] = useDeleteProductMutation();
@@ -39,7 +48,7 @@ function DashboardTab() {
               <Tab>
                 <button
                   type="button"
-                  className="font-medium border-b-2 hover:shadow-green-700 border-green-500 text-green-500 rounded-lg text-xl shadow-[inset_0_0_8px_rgba(0,0,0,0.6)]  px-5 py-1.5 text-center bg-[#605d5d12] "
+                  className="mt-7 font-medium border-b-2 hover:shadow-green-700 border-green-500 text-green-500 rounded-lg text-xl shadow-[inset_0_0_8px_rgba(0,0,0,0.6)]  px-5 py-1.5 text-center bg-[#605d5d12] "
                 >
                   <div className="flex gap-2 items-center">
                     <MdOutlineProductionQuantityLimits />
@@ -50,7 +59,7 @@ function DashboardTab() {
               <Tab>
                 <button
                   type="button"
-                  className="font-medium border-b-2 border-green-500 bg-[#605d5d12] text-green-500  hover:shadow-green-700  rounded-lg text-xl shadow-[inset_0_0_8px_rgba(0,0,0,0.6)]    px-5 py-1.5 text-center "
+                  className="mt-7 font-medium border-b-2 border-green-500 bg-[#605d5d12] text-green-500  hover:shadow-green-700  rounded-lg text-xl shadow-[inset_0_0_8px_rgba(0,0,0,0.6)]    px-5 py-1.5 text-center "
                 >
                   <div className="flex gap-2 items-center">
                     <AiFillShopping /> Order
@@ -233,9 +242,7 @@ function DashboardTab() {
                 </div>
               </div>
             </TabPanel>
-
             <TabPanel>
-              {/* <Order order={order} setOrder={setOrder} setLoading={setLoading} /> */}
               <div className="relative overflow-x-auto mb-16">
                 <h1
                   className=" text-center mb-5 text-3xl font-semibold underline"
@@ -243,9 +250,8 @@ function DashboardTab() {
                 >
                   Order Details
                 </h1>
-
-                {order.map((allorder, index) => {
-                  return (
+                {orders.length > 0 ?
+                  (
                     <table className="w-full text-sm text-left text-green-500 dark:text-green-400">
                       <thead
                         className="text-xs text-black uppercase bg-green-200 "
@@ -256,52 +262,18 @@ function DashboardTab() {
                         }}
                       >
                         <tr>
-                          <th scope="col" className="px-6 py-3">
-                            Payment Id
+                        <th scope="col" className="px-6 py-3">
+                            Products
                           </th>
                           <th scope="col" className="px-6 py-3">
-                            Image
+                            Order ID.
                           </th>
-                          <th scope="col" className="px-6 py-3">
-                            Title
-                          </th>
-                          <th scope="col" className="px-6 py-3">
-                            Price
-                          </th>
-                          <th scope="col" className="px-6 py-3">
-                            Category
-                          </th>
-                          <th scope="col" className="px-6 py-3">
-                            Name
-                          </th>
-                          <th scope="col" className="px-6 py-3">
-                            Address
-                          </th>
-                          <th scope="col" className="px-6 py-3">
-                            Pincode
-                          </th>
-                          <th scope="col" className="px-6 py-3">
-                            Phone Number
-                          </th>
-                          <th scope="col" className="px-6 py-3">
-                            Email
-                          </th>
-                          <th scope="col" className="px-6 py-3">
-                            Date
-                          </th>
+
                         </tr>
                       </thead>
-                      {allorder.cartItems.map((item, index) => {
-                        // console.log(allorder)
-                        const {
-                          title,
-                          description,
-                          category,
-                          imageUrl,
-                          price,
-                        } = item;
-                        return (
-                          <tbody>
+                      <tbody>
+                        {orders.map(order => {
+                          return (
                             <tr
                               className="bg-green-50 border-b  dark:border-green-700"
                               style={{
@@ -316,25 +288,18 @@ function DashboardTab() {
                                   color: mode === "dark" ? "white" : "",
                                 }}
                               >
-                                {allorder.paymentId}
-                              </td>
-                              <th
-                                scope="row"
-                                className="px-6 py-4 font-medium text-black whitespace-nowrap"
-                              >
-                                <img
-                                  className="w-16"
-                                  src={imageUrl}
-                                  alt="img"
-                                />
-                              </th>
-                              <td
-                                className="px-6 py-4 text-black "
-                                style={{
-                                  color: mode === "dark" ? "white" : "",
-                                }}
-                              >
-                                {title}
+                                {order.orderItems.map(item => {
+                                  return (
+                                    <div className="flex items-center">
+                                      <img class="ml-3 w-10 h-10 rounded-full"
+                                        src={productDetails[item.name].imageUrl}
+                                        alt="" />
+                                      <p class="text-gray-900 whitespace-no-wrap ml-3">
+                                        {item.name} ({item.quantity} kg)
+                                      </p>
+                                    </div>
+                                  )
+                                })}
                               </td>
                               <td
                                 className="px-6 py-4 text-black "
@@ -342,72 +307,20 @@ function DashboardTab() {
                                   color: mode === "dark" ? "white" : "",
                                 }}
                               >
-                                ₹{price}
-                              </td>
-                              <td
-                                className="px-6 py-4 text-black "
-                                style={{
-                                  color: mode === "dark" ? "white" : "",
-                                }}
-                              >
-                                {category}
+                                {order.orderId}
                               </td>
 
-                              <td
-                                className="px-6 py-4 text-black "
-                                style={{
-                                  color: mode === "dark" ? "white" : "",
-                                }}
-                              >
-                                {allorder.addressInfo.name}
-                              </td>
-                              <td
-                                className="px-6 py-4 text-black "
-                                style={{
-                                  color: mode === "dark" ? "white" : "",
-                                }}
-                              >
-                                {allorder.addressInfo.address}
-                              </td>
-                              <td
-                                className="px-6 py-4 text-black "
-                                style={{
-                                  color: mode === "dark" ? "white" : "",
-                                }}
-                              >
-                                {allorder.addressInfo.pincode}
-                              </td>
-                              <td
-                                className="px-6 py-4 text-black "
-                                style={{
-                                  color: mode === "dark" ? "white" : "",
-                                }}
-                              >
-                                {allorder.addressInfo.phoneNumber}
-                              </td>
-                              <td
-                                className="px-6 py-4 text-black "
-                                style={{
-                                  color: mode === "dark" ? "white" : "",
-                                }}
-                              >
-                                {allorder.email}
-                              </td>
-                              <td
-                                className="px-6 py-4 text-black "
-                                style={{
-                                  color: mode === "dark" ? "white" : "",
-                                }}
-                              >
-                                {allorder.date}
-                              </td>
                             </tr>
-                          </tbody>
-                        );
-                      })}
+                          )
+                        })}
+                      </tbody>
                     </table>
-                  );
-                })}
+                  ) :
+                  (
+                    <>
+                    </>
+                  )
+                }
               </div>
             </TabPanel>
 
@@ -444,7 +357,6 @@ function DashboardTab() {
                       </th>
                     </tr>
                   </thead>
-
                 </table>
               </div>
             </TabPanel>

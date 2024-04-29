@@ -22,10 +22,14 @@ export const orderAPI = createApi({
             query: (id) => `my?id=${id}`,
             providesTags:["order"]
         }),
+        getFarmerOrder:builder.query({
+            query:(id)=>`allOrders/${id}`,
+            providesTags:["order"]
+        }),
         getPath:builder.query({
             query:(id)=>`${id}`
         })
     })
 });
 
-export const { useNewOrderMutation, useGetUserOrderQuery,useGetPathQuery } = orderAPI
+export const { useNewOrderMutation,useGetFarmerOrderQuery,useGetUserOrderQuery,useGetPathQuery } = orderAPI

@@ -18,6 +18,9 @@ const cartSlice = createSlice({
     deleteFromCart(state, action) {
       return state.filter((item) => item.name != action.payload.name);
     },
+    deleteAllCart(state) {
+      return state.filter((item) => false);
+    },
     updateCart(state, action) {
       return state.map((item) => {
         if (item.name === action.payload.name) {
@@ -28,6 +31,6 @@ const cartSlice = createSlice({
   },
 });
 
-export const { addToCart, deleteFromCart, updateCart } = cartSlice.actions;
+export const { addToCart, deleteFromCart, deleteAllCart,updateCart } = cartSlice.actions;
 
 export default cartSlice.reducer;

@@ -13,6 +13,7 @@ const getPath = async (points) => {
   const response = await fetch(
     `${baseURl}/directions/v5/mapbox/driving/${query}?annotations=distance&geometries=geojson&steps=true&language=en&overview=full&access_token=${token}`
   );
+
   if (response.ok) {
     const jsonData = await response.json();
     const path = [];
@@ -26,6 +27,8 @@ const getPath = async (points) => {
 };
 const Map = (props) => {
   const id = props.orderID;
+  console.log(id);
+  const showFullPath = props.showFullPath;
   const { data } = useGetPathQuery(id);
 
   useEffect(() => {
@@ -80,7 +83,7 @@ const Map = (props) => {
               "line-cap": "round",
             },
             paint: {
-              "line-color": "blue",
+              "line-color": "green",
               "line-width": 8,
             },
           });
@@ -118,66 +121,68 @@ const Map = (props) => {
             "circle-color": "#00FF00", // Different color for the last point
           },
         });
-        // map.on('load', () => {
-        //     const animationDuration = 100000;
-        //     const cameraAltitude = 1600;
-        //     const routeDistance = turf.lineDistance(turf.lineString(path));
-        //     const cameraRouteDistance = turf.lineDistance(
-        //         turf.lineString(path)
-        //     );
+        if (showFullPath) {
+          map.on('load', () => {
+            const animationDuration = 100000;
+            const cameraAltitude = 1600;
+            const routeDistance = turf.lineDistance(turf.lineString(path));
+            const cameraRouteDistance = turf.lineDistance(
+              turf.lineString(path)
+            );
 
-        //     let start;
+            let start;
 
-        //     function frame(time) {
-        //         if (!start) start = time;
+            function frame(time) {
+              if (!start) start = time;
 
-        //         const phase = (time - start) / animationDuration;
+              const phase = (time - start) / animationDuration;
 
-        //         if (phase > 1) {
+              if (phase > 1) {
 
-        //             setTimeout(() => {
-        //                 start = 0.0;
-        //             }, 1500);
-        //         }
+                setTimeout(() => {
+                  start = 0.0;
+                }, 1500);
+              }
 
-        //         const alongRoute = turf.along(
-        //             turf.lineString(path),
-        //             routeDistance * phase
-        //         ).geometry.coordinates;
+              const alongRoute = turf.along(
+                turf.lineString(path),
+                routeDistance * phase
+              ).geometry.coordinates;
 
-        //         const alongCamera = turf.along(
-        //             turf.lineString(path),
-        //             cameraRouteDistance * phase
-        //         ).geometry.coordinates;
+              const alongCamera = turf.along(
+                turf.lineString(path),
+                cameraRouteDistance * phase
+              ).geometry.coordinates;
 
-        //         const camera = map.getFreeCameraOptions();
+              const camera = map.getFreeCameraOptions();
 
-        //         camera.position = mapboxgl.MercatorCoordinate.fromLngLat(
-        //             {
-        //                 lng: alongCamera[0],
-        //                 lat: alongCamera[1]
-        //             },
-        //             cameraAltitude
-        //         );
+              camera.position = mapboxgl.MercatorCoordinate.fromLngLat(
+                {
+                  lng: alongCamera[0],
+                  lat: alongCamera[1]
+                },
+                cameraAltitude
+              );
 
-        //         camera.lookAtPoint({
-        //             lng: alongRoute[0],
-        //             lat: alongRoute[1]
-        //         });
+              camera.lookAtPoint({
+                lng: alongRoute[0],
+                lat: alongRoute[1]
+              });
 
-        //         map.setFreeCameraOptions(camera);
+              map.setFreeCameraOptions(camera);
 
-        //         window.requestAnimationFrame(frame);
-        //     }
+              window.requestAnimationFrame(frame);
+            }
 
-        //     window.requestAnimationFrame(frame);
-        // });
+            window.requestAnimationFrame(frame);
+          });
+        }
         return () => map.remove();
       };
 
       initializeMap();
     }
-  }, [data]);
+  }, [data, showFullPath]);
 
   return <div id="map" style={{ width: "100%", height: "80vh" }} />;
 };

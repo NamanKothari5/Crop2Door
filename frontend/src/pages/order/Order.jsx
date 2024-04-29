@@ -1,20 +1,18 @@
 import React, { useContext, useEffect, useState } from "react";
 import myContext from "../../context/data/myContext";
 import Layout from "../../components/layout/Layout";
-import Loader from "../../components/loader/Loader";
 import { useSelector } from "react-redux";
 import { useGetUserOrderQuery } from "../../redux/api/orderApi";
 import { productDetails } from "../../assets/productDetails";
 import { useNavigate } from "react-router-dom";
-import { Button, Modal } from "flowbite-react";
+import { Modal } from "flowbite-react";
 import Map from "../../pages/Map/Map";
 function Order() {
-  const navigate = useNavigate();
   const { user } = useSelector((state) => state.userReducer);
   const { data, isLoading } = useGetUserOrderQuery(user._id);
   const [orders, setOrders] = useState([]);
-  const [openModal, setOpenModal] = useState(true);
-
+  const [openModal, setOpenModal] = useState('');
+  const [showFullPath, setShowFullPath] = useState(false);
   useEffect(() => {
     if (data) setOrders(data.orders);
   }, [data]);
@@ -84,7 +82,7 @@ function Order() {
                       <td>
                         <button
                           className="cursor-pointer"
-                          onClick={() => setOpenModal(true)}
+                          onClick={() => setOpenModal(order._id)}
                         >
                           <span class="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
                             <span
@@ -96,23 +94,49 @@ function Order() {
                         </button>
                         <Modal
                           dismissible
-                          show={openModal}
-                          onClose={() => setOpenModal(false)}
+                          show={openModal===order._id}
+                          onClose={() => {setOpenModal(''),setShowFullPath(false)}}
                           size="xs"
                         >
                           <Modal.Body>
-                            <Map orderID={order._id} />
+                            <Map orderID={order._id} showFullPath={showFullPath} />
                           </Modal.Body>
                           <Modal.Footer>
-                            <Button>
-                              Path
-                            </Button>
-                            <Button>
-                              Visualize
-                            </Button>
-                            <Button onClick={() => setOpenModal(false)}>
-                              Close
-                            </Button>
+                            <button
+                              className="m-2 cursor-pointer" onClick={() => setShowFullPath(false)}
+                            >
+                              <span className={`relative inline-block px-3 py-1 font-semibold text-white leading-tight`}>
+                                <span
+                                  aria-hidden
+                                  className={`absolute inset-0 ${showFullPath?'bg-blue-600':'bg-blue-200'} rounded-full`}
+                                ></span>
+                                <span class="relative">Path</span>
+                              </span>
+                            </button>
+                            <button
+                              className="m-2 cursor-pointer"
+                              onClick={() => setShowFullPath(true)}
+                            >
+                              <span className={`relative inline-block px-3 py-1 font-semibold text-white leading-tight`}>
+                                <span
+                                  aria-hidden
+                                  class={`absolute inset-0 ${!showFullPath?'bg-green-600':'bg-green-200'} rounded-full`}
+                                ></span>
+                                <span class="relative">Visualise</span>
+                              </span>
+                            </button>
+                            <button
+                              className="m-2 cursor-pointer"
+                              onClick={() => {setOpenModal(''),setShowFullPath(false)}}
+                            >
+                              <span class="relative inline-block px-3 py-1 font-semibold text-white leading-tight">
+                                <span
+                                  aria-hidden
+                                  class="absolute inset-0 bg-red-600 rounded-full"
+                                ></span>
+                                <span class="relative">Close</span>
+                              </span>
+                            </button>
                           </Modal.Footer>
                         </Modal>
                       </td>

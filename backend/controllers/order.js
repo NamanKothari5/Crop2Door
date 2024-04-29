@@ -106,34 +106,6 @@ module.exports.newOrder = TryCatch(async (req, res, next) => {
   );
 
   let { min_dist, finalPath } = findCluster(distances, allClusters);
-  // for (farmIdx in finalPath) {
-  //     if (farmIdx < validFarms.length) {
-  //       const farmProducts = validFarms[farmIdx].products;
-  //       farmProducts.forEach(async (productId) => {
-  //         const product = await Product.findById(productId);
-  //         if(product.name in requiredProducts && requiredProducts[product.name] > 0){
-  //             const currQuantity = Math.min(product.stock, requiredProducts[product.name]);
-  //             product.stock -= currQuantity;
-  //             requiredProducts[product.name] -= currQuantity;
-  //             await product.save();
-  //         }
-  //       });
-  //     }
-  //   }
-  /*
-  orders:[
-    {
-      orderId:'abc'
-      orderItems:[
-        {
-          name:
-          price:
-          quantity
-        }
-      ]
-    }
-  ]
-  */
 
   const finalPathIdx = finalPath;
   finalPath = finalPath.map((idx) => {

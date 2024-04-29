@@ -155,7 +155,7 @@ function Navbar() {
             color: mode === "dark" ? "white" : "",
           }}
         >
-          Avail Free delivery on orders above ₹500🍒
+          Avail Free delivery on orders above ₹1000🍒
         </p>
 
         <nav
@@ -198,6 +198,7 @@ function Navbar() {
               <div className="ml-4 flex lg:ml-0">
                 <Link to={"/"} className="flex">
                   <div className="flex ">
+                    <img className="h-12 w-12" src="https://res.cloudinary.com/djhcnbsvg/image/upload/v1714375564/logo_u8n2wp.jpg" alt="" />
                     <h1
                       className=" text-2xl font-bold text-black  px-2 py-1 rounded"
                       style={{ color: mode === "dark" ? "white" : "" }}
@@ -241,7 +242,7 @@ function Navbar() {
                       className="text-sm font-medium text-green-700 "
                       style={{ color: mode === "dark" ? "white" : "" }}
                     >
-                      Admin
+                      Dashboard
                     </Link>
                   ) : (
                     ""

@@ -2,139 +2,139 @@ module.exports.products=[
     {
         name:"Potato",
         category:"Vegetable",
-        stock:12,
+        stock:120,
         userId:"abc",
         price:30
     },{
         name:"Tomato",
         category:"Vegetable",
-        stock:43,
+        stock:430,
         userId:"abc",
         price:30
     },
     {
         name:"Onion",
         category:"Vegetable",
-        stock:32,
+        stock:320,
         userId:"abc",
         price:30
     },
     {
         name:"Onion",
         category:"Vegetable",
-        stock:19,
+        stock:190,
         userId:"def",
         price:30
     },{
         name:"Brinjal",
         category:"Vegetable",
-        stock:54,
+        stock:540,
         userId:"def",
         price:30
     },
     {
         name:"Cabbage",
         category:"Vegetable",
-        stock:29,
+        stock:290,
         userId:"def",
         price:30
     },
     {
         name:"Cabbage",
         category:"Vegetable",
-        stock:31,
+        stock:310,
         userId:"geh"
     },{
         name:"Cauliflower",
         category:"Vegetable",
-        stock:27,
+        stock:270,
         userId:"geh",
         price:30
     },
     {
         name:"Bottle Gourd",
         category:"Vegetable",
-        stock:17,
+        stock:170,
         userId:"geh",
         price:30
     },
     {
         name:"Brinjal",
         category:"Vegetable",
-        stock:15,
+        stock:150,
         userId:"hij",
         price:30
     },{
         name:"Tomato",
         category:"Vegetable",
-        stock:12,
+        stock:120,
         userId:"hij",
         price:30
     },
     {
         name:"Pumpkin",
         category:"Vegetable",
-        stock:19,
+        stock:190,
         userId:"hij",
         price:30
     },
     {
         name:"Bottle Gourd",
         category:"Vegetable",
-        stock:25,
+        stock:250,
         userId:"ijk",
         price:30
     },{
         name:"Carrot",
         category:"Vegetable",
-        stock:33,
+        stock:330,
         userId:"ijk",
         price:30
     },
     {
         name:"Okra",
         category:"Vegetable",
-        stock:26,
+        stock:260,
         userId:"ijk",
         price:30
     },
     {
         name:"Potato",
         category:"Vegetable",
-        stock:22,
+        stock:220,
         userId:"nmp",
         price:30
     },{
         name:"Okra",
         category:"Vegetable",
-        stock:19,
+        stock:190,
         userId:"nmp",
         price:30
     },
     {
         name:"Bottle Gourd",
         category:"Vegetable",
-        stock:7,
+        stock:700,
         userId:"nmp",
         price:30
     },
     {
         name:"Cabbage",
         category:"Vegetable",
-        stock:44,
+        stock:440,
         userId:"lmn",
         price:30
     },{
         name:"Okra",
         category:"Vegetable",
-        stock:11,
+        stock:110,
         userId:"lmn",
         price:30
     },
     {
         name:"Onion",
         category:"Vegetable",
-        stock:32,
+        stock:320,
         userId:"lmn",
         price:30
     }
