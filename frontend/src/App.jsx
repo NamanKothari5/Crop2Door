@@ -10,13 +10,13 @@ import {
 import Home from './pages/home/Home';
 import Order from './pages/order/Order';
 import Cart from './pages/cart/Cart';
-import Dashboard from './pages/admin/dashboard/Dashboard';
+import Dashboard from './pages/farmer/dashboard/Dashboard';
 import NoPage from './pages/nopage/NoPage';
 import MyState from './context/data/myState';
 
 import ProductInfo from './pages/productInfo/ProductInfo';
-import AddProduct from './pages/admin/page/AddProduct';
-import UpdateProduct from './pages/admin/page/UpdateProduct';
+import AddProduct from './pages/farmer/page/AddProduct';
+import UpdateProduct from './pages/farmer/page/UpdateProduct';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Allproducts from './pages/allproducts/Allproducts';

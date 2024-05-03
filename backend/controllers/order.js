@@ -159,7 +159,6 @@ module.exports.newOrder = TryCatch(async (req, res, next) => {
           // await product.save();
         }
       }));
-      
       if (farmOrderItems.length > 0)
         farm.orders.push({
         orderId: order._id,
@@ -208,3 +207,67 @@ module.exports.getAllOrdersOnFarm = TryCatch(async (req, res, next) => {
       orders: farm.orders
   })
 });
+
+module.exports.getAllOrders = TryCatch(async(req, res, next)=>{
+  const orders = await Order.find({});
+  const farms = await Farm.find({});
+
+
+  const allOrders = orders.map((order)=>{
+    const orderId = order._id;
+    const paymentID = order.paymentID;
+    let orderDetails=[];
+    farms.forEach((farm)=>{
+      farm.orders.forEach((farmOrder) => {
+        if(String(farmOrder.orderId) === String(orderId)){
+          farmOrder.orderItems.forEach((orderItem)=>{
+            orderDetails.push({name:orderItem.name,price:orderItem.price,quantity:orderItem.quantity,farmUser:farm.user});
+          })
+        }
+      });
+    });
+
+    
+    return {orderId,paymentID, orderDetails};
+  });
+  
+  return res.status(200).json({
+    success: true,
+    allOrders
+  });
+})
+
+/*
+[orderid:
+    paymentid:
+    orderdetail: {farmid, produce, subtotal} ]
+
+farms=[{
+  id:"11".
+  orders:[
+    {
+      orderId:"111".
+      orderDetails:[{name:"Tomato",price:11,quantity:11},{name:"Potato",price:12,quantity:12}]
+    }
+  ]
+},
+{
+  id:"11".
+  orders:[
+    {
+      orderId:"111".
+      orderDetails:[{name:"Potato",price:12,quantity:12},{name:"Tomato",price:11,quantity:12}]
+    }
+  ]
+},
+]
+
+Output:
+[{
+  orderId:"1111",
+  payment:11,
+  orderDetail:[
+    {name:"Tomato",price:11,quantity:11,farmId},{name:"Potato",price:12,quantity:12,farmId},{name:"Potato",price:12,quantity:12,farmId},{name:"Potato",price:12,quantity:12,farmId}
+  ]
+}]
+*/

@@ -27,7 +27,6 @@ module.exports.newFarm = TryCatch(async (req, res, next) => {
 });
 
 module.exports.getSingleFarm=TryCatch(async (req,res,next)=>{
-    console.log("req made");
     const id = req.params.id;
     const farm=await Farm.findById(id);
 

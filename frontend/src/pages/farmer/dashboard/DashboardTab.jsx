@@ -19,7 +19,6 @@ function DashboardTab() {
   const [orders, setOrders] = useState([]);
   const ordersQuery = useGetFarmerOrderQuery(user.farm);
   useEffect(() => {
-    console.log(ordersQuery.data);
     if (ordersQuery.data)
       setOrders(ordersQuery.data.orders);
 
@@ -268,11 +267,24 @@ function DashboardTab() {
                           <th scope="col" className="px-6 py-3">
                             Order ID.
                           </th>
-
+                          {/* <th scope="col" className="px-6 py-3">
+                            Platform Fee
+                          </th> */}
+                          <th scope="col" className="px-6 py-3">
+                            Earnings
+                          </th>
                         </tr>
                       </thead>
                       <tbody>
                         {orders.map(order => {
+                          console.log(order);
+                          let earnings=0;
+                          order.orderItems.map((item)=>{
+                            const {quantity,price}=item;
+                            const itemEarning=(0.75)*(price*quantity);
+                            earnings+=itemEarning;
+                            return item;
+                          });
                           return (
                             <tr
                               className="bg-green-50 border-b  dark:border-green-700"
@@ -309,7 +321,14 @@ function DashboardTab() {
                               >
                                 {order.orderId}
                               </td>
-
+                              <td
+                                className="px-6 py-4 text-black "
+                                style={{
+                                  color: mode === "dark" ? "white" : "",
+                                }}
+                              >
+                                ₹{earnings}
+                              </td>
                             </tr>
                           )
                         })}
