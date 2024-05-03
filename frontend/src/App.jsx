@@ -27,6 +27,7 @@ import { auth } from './fireabase/FirebaseConfig';
 import { userExist, userNotExist } from './redux/reducer/userReducer';
 import { getUser } from './redux/api/userApi';
 import Map from './pages/Map/Map';
+import AllOrders from "./pages/admin/AllOrders";
 
 function App() {
   const { user, loading } = useSelector(
@@ -52,6 +53,9 @@ function App() {
     <MyState>
       <Router>
         <Routes>
+          <Route path='/adminOrders' element = {<ProtectedRouteForAdmin user={user}>
+            <AllOrders />
+            </ProtectedRouteForAdmin>}/>
           <Route path='/faker' element={<MyState />} />
           <Route path="/" element={<Home />} />
           <Route path="/allproducts" element={<Allproducts />} />
@@ -119,5 +123,15 @@ const ProtectedRouteForFarmer = (props) => {
   }
 
 };
+const ProtectedRouteForAdmin = (props) => {
+  const location = useLocation();
+  if (props.user?.role === 'admin') {
+    return props.children
+  }
+  else {
+    
+    return <Navigate to={'/login'} state={{ prevPath: location.pathname }} />
+  }
 
+};
 export default App

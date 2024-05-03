@@ -217,18 +217,21 @@ module.exports.getAllOrders = TryCatch(async(req, res, next)=>{
     const orderId = order._id;
     const paymentID = order.paymentID;
     let orderDetails=[];
+    let adminRevenue = 0;
+    
     farms.forEach((farm)=>{
       farm.orders.forEach((farmOrder) => {
         if(String(farmOrder.orderId) === String(orderId)){
           farmOrder.orderItems.forEach((orderItem)=>{
             orderDetails.push({name:orderItem.name,price:orderItem.price,quantity:orderItem.quantity,farmUser:farm.user});
+            adminRevenue += orderItem.price * orderItem.quantity * 0.25;
           })
         }
       });
     });
 
     
-    return {orderId,paymentID, orderDetails};
+    return {orderId,paymentID, orderDetails, adminRevenue};
   });
   
   return res.status(200).json({

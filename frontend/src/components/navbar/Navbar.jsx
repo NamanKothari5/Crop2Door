@@ -100,7 +100,7 @@ function Navbar() {
                         className="-m-2 block p-2 font-medium text-green-900"
                         style={{ color: mode === "dark" ? "white" : "" }}
                       >
-                        admin
+                        Dashboard
                       </Link>
                     </div>
                   ) : (
@@ -247,7 +247,14 @@ function Navbar() {
                   ) : (
                     ""
                   )}
+                  {user?.role==='admin'?(
+                    <Link to={"/adminOrders"}  className="text-sm font-medium text-green-700 "
+                    style={{ color: mode === "dark" ? "white" : "" }}>All Orders</Link>
+                  ):(
+                    ""
+                  )
 
+                  }
                   {user ? (
                     <a
                       onClick={logout}

@@ -16,20 +16,23 @@ export const orderAPI = createApi({
                     body: { orderItems, paymentID },
                 }
             },
-            invalidatesTags:["order"]
+            invalidatesTags: ["order"]
         }),
         getUserOrder: builder.query({
             query: (id) => `my?id=${id}`,
-            providesTags:["order"]
+            providesTags: ["order"]
         }),
-        getFarmerOrder:builder.query({
-            query:(id)=>`allOrders/${id}`,
-            providesTags:["order"]
+        getFarmerOrder: builder.query({
+            query: (id) => `allOrders/${id}`,
+            providesTags: ["order"]
         }),
-        getPath:builder.query({
-            query:(id)=>`${id}`
+        getAdminOrders: builder.query({
+            query: (id) => `adminOrders/?id=${id}`
+        }),
+        getPath: builder.query({
+            query: (id) => `${id}`
         })
     })
 });
 
-export const { useNewOrderMutation,useGetFarmerOrderQuery,useGetUserOrderQuery,useGetPathQuery } = orderAPI
+export const { useNewOrderMutation, useGetFarmerOrderQuery, useGetAdminOrdersQuery, useGetUserOrderQuery, useGetPathQuery } = orderAPI
