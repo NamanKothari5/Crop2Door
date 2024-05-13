@@ -25,14 +25,14 @@ const Map = (props) => {
   const id = props.orderID;
   const showFullPath = props.showFullPath;
   const { data } = useGetPathQuery(id);
-  const pathDistance=data.distance
+  
   useEffect(() => {
     if (data) {
       mapboxgl.accessToken =
         `${import.meta.env.VITE_APP_MAPBOX_TOKEN}`;
       const initializeMap = async () => {
         const points = data.finalPath;
-
+        const pathDistance=data.distance
         const map = new mapboxgl.Map({
           container: "map",
           style: "mapbox://styles/mapbox/streets-v12",
