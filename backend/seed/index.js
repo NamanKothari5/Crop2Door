@@ -38,6 +38,6 @@ async function updateDb() {
     });
     await Promise.all(productPromises);
 }
-const mongoURI=process.env.MONGO_URI || "mongodb://0.0.0.0:27017";
+const mongoURI=process.env.MONGO_URI || "mongodb+srv://namankothari0512:crop2door@cluster0.467aqd3.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 connectDB(mongoURI);
 updateDb();

@@ -1,17 +1,13 @@
-import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import React, {useEffect } from "react";
 import { useGetPathQuery } from "../../redux/api/orderApi";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import turf from "turf"; // Importing turf is unnecessary if you're not using it in this component
 const getPath = async (points) => {
-  const baseURl = "https://api.mapbox.com";
-  const token =
-    "pk.eyJ1IjoibmlzaHRhbiIsImEiOiJja3ZkcGNmZWg0d25wMm5xd2RkcDBzeHVsIn0.irJll1qHLs4XBFONtsVYFA";
   const query = points.map((coord) => coord.join(",")).join(";");
-
+  
   const response = await fetch(
-    `${baseURl}/directions/v5/mapbox/driving/${query}?annotations=distance&geometries=geojson&steps=true&language=en&overview=full&access_token=${token}`
+    `${import.meta.env.VITE_APP_MAPBOX_BASE_URL}/directions/v5/mapbox/driving/${query}?annotations=distance&geometries=geojson&steps=true&language=en&overview=full&access_token=${import.meta.env.VITE_APP_MAPBOX_TOKEN}`
   );
 
   if (response.ok) {
@@ -27,14 +23,12 @@ const getPath = async (points) => {
 };
 const Map = (props) => {
   const id = props.orderID;
-  console.log(id);
   const showFullPath = props.showFullPath;
   const { data } = useGetPathQuery(id);
-
   useEffect(() => {
     if (data) {
       mapboxgl.accessToken =
-        "pk.eyJ1IjoibmlzaHRhbiIsImEiOiJja3ZkcGNmZWg0d25wMm5xd2RkcDBzeHVsIn0.irJll1qHLs4XBFONtsVYFA";
+        `${import.meta.env.VITE_APP_MAPBOX_TOKEN}`;
       const initializeMap = async () => {
         const points = data.finalPath;
 

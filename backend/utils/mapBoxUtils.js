@@ -1,4 +1,3 @@
-
 module.exports.getCoordinates = async (address, pincode) => {
   const baseURl = process.env.MAPBOX_BASE_URL || 'https://api.mapbox.com';
   const token = process.env.MAPBOX_TOKEN || 'pk.eyJ1IjoibmlzaHRhbiIsImEiOiJja3ZkcGNmZWg0d25wMm5xd2RkcDBzeHVsIn0.irJll1qHLs4XBFONtsVYFA';
