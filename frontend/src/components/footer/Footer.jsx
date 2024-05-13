@@ -43,7 +43,7 @@ function Footer() {
               target="_blank"
               style={{ color: mode === "dark" ? "white" : "" }}
             >
-              www.crop2door.com
+              www.crop2door.vercel.app
             </a>
           </p>
         </div>
