@@ -1,9 +1,12 @@
 const { TryCatch } = require("../middlewares/errorHandler");
+const { Farm } = require("../models/farm");
 const { User } = require("../models/user");
 const CustomError = require("../utils/customError");
+const { getCoordinates } = require("../utils/mapBoxUtils");
 
 module.exports.loginUser = TryCatch(async (req, res, next) => {
-    const { _id, name, email, gender, dob, role } = req.body;
+    
+    const { _id, name, email, address, pincode, role } = req.body;
 
     let user = await User.findById(_id);
 
@@ -15,9 +18,20 @@ module.exports.loginUser = TryCatch(async (req, res, next) => {
             success: true,
             message: `Welcome ${user.name}`
         })
-    }
-    user = await User.create({ _id, name, email, gender, dob: new Date(dob), role });
+    };
 
+    
+    const coordinates = await getCoordinates(address, pincode);
+
+
+    user = await User.create({ _id, name, email, address, pincode: Number(pincode),coordinates, role });
+
+    if(user.role=='farmer'){
+        const coordinates = await getCoordinates(address, pincode);
+        const newFarm=await Farm.create({address,pincode,user:_id,coordinates});
+        user.farm=newFarm._id;
+        await user.save();
+    }
     res.status(200).json({
         success: true,
         message: `Welcome ${user.name}`

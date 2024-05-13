@@ -13,11 +13,15 @@ app.use(cors());
 
 const userRoutes = require("./routes/user");
 const productRoutes = require("./routes/product");
+const farmRoutes = require("./routes/farm");
+const orderRoutes=require("./routes/order");
 const { connectDB } = require("./utils/features");
 const { errorHandler } = require("./middlewares/errorHandler");
 
 app.use("/api/user", userRoutes);
 app.use("/api/product", productRoutes);
+app.use("/api/farm", farmRoutes);
+app.use("/api/order",orderRoutes);
 
 app.use("/uploads", express.static("uploads"));
 app.use(errorHandler);
