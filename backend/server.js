@@ -10,7 +10,7 @@ const mongoURI=process.env.MONGO_URI || "";
 const app = express();
 app.use(express.json());
 app.use(cors({
-  origin: 'https://crop2door-backend.vercel.app'
+  origin: 'https://crop2door.vercel.app'
 }));
 
 const userRoutes = require("./routes/user");
