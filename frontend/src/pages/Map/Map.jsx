@@ -1,11 +1,11 @@
-import React, {useEffect } from "react";
+import React, { useEffect } from "react";
 import { useGetPathQuery } from "../../redux/api/orderApi";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import turf from "turf"; // Importing turf is unnecessary if you're not using it in this component
+import turf, { distance } from "turf"; // Importing turf is unnecessary if you're not using it in this component
 const getPath = async (points) => {
   const query = points.map((coord) => coord.join(",")).join(";");
-  
+
   const response = await fetch(
     `${import.meta.env.VITE_APP_MAPBOX_BASE_URL}/directions/v5/mapbox/driving/${query}?annotations=distance&geometries=geojson&steps=true&language=en&overview=full&access_token=${import.meta.env.VITE_APP_MAPBOX_TOKEN}`
   );
@@ -25,6 +25,7 @@ const Map = (props) => {
   const id = props.orderID;
   const showFullPath = props.showFullPath;
   const { data } = useGetPathQuery(id);
+  const pathDistance=data.distance
   useEffect(() => {
     if (data) {
       mapboxgl.accessToken =
@@ -117,8 +118,8 @@ const Map = (props) => {
         });
         if (showFullPath) {
           map.on('load', () => {
-            const animationDuration = 100000;
-            const cameraAltitude = 1600;
+            const animationDuration = pathDistance;
+            const cameraAltitude = 0.5*pathDistance;
             const routeDistance = turf.lineDistance(turf.lineString(path));
             const cameraRouteDistance = turf.lineDistance(
               turf.lineString(path)

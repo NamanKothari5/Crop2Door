@@ -9,6 +9,10 @@ const mongoURI=process.env.MONGO_URI || "";
 
 const app = express();
 app.use(express.json());
+
+if(process.env.NODE_ENV!=="production")
+app.use(cors());
+else
 app.use(cors({
   origin: 'https://crop2door.vercel.app'
 }));
@@ -30,6 +34,7 @@ app.use("/api/order",orderRoutes);
 app.use("/uploads", express.static("uploads"));
 app.use(errorHandler);
 connectDB(mongoURI);
+
 
 app.listen(port,()=>{
     console.log(`Server is working on ${port}`);

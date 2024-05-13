@@ -5,6 +5,7 @@ const { Farm } = require("../models/farm");
 const CustomError = require("../utils/customError");
 const { Product } = require("../models/product");
 const { generateClusters, findCluster } = require("../utils/mapBoxUtils");
+const { distance } = require("@turf/turf");
 
 module.exports.newOrder = TryCatch(async (req, res, next) => {
   const { id } = req.query;
@@ -194,6 +195,7 @@ module.exports.getPath = TryCatch(async (req, res, next) => {
   return res.status(200).json({
     success: true,
     finalPath: order.finalPath,
+    distance:order.min_dist
   });
 });
 
