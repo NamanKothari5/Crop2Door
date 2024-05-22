@@ -58,7 +58,7 @@ module.exports.newOrder = TryCatch(async (req, res, next) => {
 
   let validFarms = [];
   for (let idx = 1; idx < distances.length; idx++) {
-    if (distances[idx] <= 200000) validFarms.push(allFarms[idx - 1]);
+    if (distances[idx] <= 500000) validFarms.push(allFarms[idx - 1]);
   }
 
   let produce = validFarms.map((e) => {
