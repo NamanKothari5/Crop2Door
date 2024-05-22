@@ -25,7 +25,6 @@ function ProductCard() {
   useEffect(() => {
     async function fetchProducts() {
       if (user) {
-        console.log("calling",user);
         const res = await getAllProducts({
           userId: user._id,
           userCoordinates: user.coordinates,
