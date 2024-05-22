@@ -73,7 +73,7 @@ module.exports.getAllProducts = TryCatch(async (req, res, next) => {
 
     const jsonData = await response.json();
     const distances = jsonData.distances[0];
-
+    
     let validFarms = [];
     for (let idx = 1; idx < distances.length; idx++) {
         if (distances[idx] <= 500000)

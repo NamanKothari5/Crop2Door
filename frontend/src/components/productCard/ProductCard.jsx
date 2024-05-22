@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import myContext from "../../context/data/myContext";
 import { useDispatch, useSelector } from "react-redux";
 import { useAllProductsMutation } from "../../redux/api/productApi";
@@ -17,8 +17,8 @@ function ProductCard() {
     filterPrice,
     setFilterPrice,
   } = context;
-  const { user, loading } = useSelector((state) => state.userReducer);
 
+  const { user, loading } = useSelector((state) => state.userReducer);
   const [getAllProducts] = useAllProductsMutation();
   const [allProductDetails, setAllProductsDetails] = useState({});
   const [productNameList, setProductNameList] = useState([]);

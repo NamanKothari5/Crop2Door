@@ -1,141 +1,141 @@
 module.exports.products=[
     {
-        name:"Potato",
-        category:"Vegetable",
+        name:"Banana",
+        category:"Fruit",
         stock:120,
-        userId:"abc",
+        userId:"Jalgaon",
         price:30
     },{
-        name:"Tomato",
-        category:"Vegetable",
-        stock:430,
-        userId:"abc",
+        name:"Harbara",
+        category:"Pulses",
+        stock:230,
+        userId:"Jalgaon",
         price:30
     },
     {
-        name:"Onion",
+        name:"Brinjal",
         category:"Vegetable",
         stock:320,
-        userId:"abc",
+        userId:"Jalgaon",
         price:30
     },
     {
         name:"Onion",
         category:"Vegetable",
         stock:190,
-        userId:"def",
+        userId:"Nashik",
         price:30
     },{
-        name:"Brinjal",
-        category:"Vegetable",
+        name:"Grapes",
+        category:"Fruit",
         stock:540,
-        userId:"def",
+        userId:"Nashik",
         price:30
     },
     {
-        name:"Cabbage",
+        name:"Tomato",
         category:"Vegetable",
         stock:290,
-        userId:"def",
+        userId:"Nashik",
         price:30
     },
     {
         name:"Cabbage",
         category:"Vegetable",
         stock:310,
-        userId:"geh"
+        userId:"Virar"
     },{
         name:"Cauliflower",
         category:"Vegetable",
         stock:270,
-        userId:"geh",
+        userId:"Virar",
         price:30
     },
     {
         name:"Bottle Gourd",
         category:"Vegetable",
         stock:170,
-        userId:"geh",
+        userId:"Virar",
         price:30
     },
     {
         name:"Brinjal",
         category:"Vegetable",
         stock:150,
-        userId:"hij",
+        userId:"Badlapur",
         price:30
     },{
         name:"Tomato",
         category:"Vegetable",
         stock:120,
-        userId:"hij",
+        userId:"Badlapur",
         price:30
     },
     {
         name:"Pumpkin",
         category:"Vegetable",
         stock:190,
-        userId:"hij",
+        userId:"Badlapur",
         price:30
     },
     {
         name:"Bottle Gourd",
         category:"Vegetable",
         stock:250,
-        userId:"ijk",
+        userId:"Kasara",
         price:30
     },{
         name:"Carrot",
         category:"Vegetable",
         stock:330,
-        userId:"ijk",
+        userId:"Kasara",
         price:30
     },
     {
-        name:"Okra",
+        name:"Lady's Finger",
         category:"Vegetable",
         stock:260,
-        userId:"ijk",
+        userId:"Kasara",
         price:30
     },
     {
         name:"Potato",
         category:"Vegetable",
         stock:220,
-        userId:"nmp",
+        userId:"Sangli",
         price:30
     },{
-        name:"Okra",
+        name:"Lady's Finger",
         category:"Vegetable",
         stock:190,
-        userId:"nmp",
+        userId:"Sangli",
         price:30
     },
     {
         name:"Bottle Gourd",
         category:"Vegetable",
         stock:700,
-        userId:"nmp",
+        userId:"Sangli",
         price:30
     },
     {
-        name:"Cabbage",
-        category:"Vegetable",
+        name:"Harbara",
+        category:"Pulses",
         stock:440,
-        userId:"lmn",
+        userId:"Dhule",
         price:30
     },{
-        name:"Okra",
-        category:"Vegetable",
+        name:"Banana",
+        category:"Fruit",
         stock:110,
-        userId:"lmn",
+        userId:"Dhule",
         price:30
     },
     {
         name:"Onion",
         category:"Vegetable",
         stock:320,
-        userId:"lmn",
+        userId:"Dhule",
         price:30
     }
 ]

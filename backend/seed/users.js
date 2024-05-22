@@ -1,56 +1,57 @@
 module.exports.users=[
     {
-        _id:"abc",
-        name:"Nishtan",
+        _id:"Jalgaon",
+        name:"Nishant",
         email:"ni@g.com",
-        address:"Vikroli",
-        pincode:"400079",
+        address:"Jalgaon",
+        pincode:"412005",
         role:"farmer"
     },
     {
-        _id:"def",
+        _id:"Nashik",
         name:"Naman",
         email:"na@g.com",
-        address:"Dombivali",
-        pincode:"400612",
+        address:"Nashik",
+        pincode:"420003",
         role:"farmer"
-    },{
-        _id:"geh",
+    },
+    {
+        _id:"Virar",
         name:"Sachit",
         email:"sa@g.com",
         address:"Virar",
         pincode:"401203",
         role:"farmer"
     },{
-        _id:"hij",
+        _id:"Badlapur",
         name:"Abhishek",
         email:"ab@g.com",
-        address:"Kurla",
-        pincode:"400070",
+        address:"Badlapur",
+        pincode:"421503",
         role:"farmer"
     },
     {
-        _id:"ijk",
+        _id:"Kasara",
         name:"Dhrumil",
         email:"dh@g.com",
-        address:"Marine Lines",
-        pincode:"400020",
+        address:"Kasara",
+        pincode:"421602",
         role:"farmer"
     },
     {
-        _id:"nmp",
+        _id:"Sangli",
         name:"Utkarsh",
         email:"ut@g.com",
-        address:"Bandra",
-        pincode:"400050",
+        address:"Sangli",
+        pincode:"416406",
         role:"farmer"
     },
     {
-        _id:"lmn",
-        name:"Dombvali",
+        _id:"Dhule",
+        name:"Bhavik",
         email:"bh@g.com",
-        address:"Dombivali",
-        pincode:"400612",
+        address:"Dhule",
+        pincode:"424001",
         role:"farmer"
     }
 ]

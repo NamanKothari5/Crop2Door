@@ -71,9 +71,15 @@ module.exports.newOrder = TryCatch(async (req, res, next) => {
       produce[i][product.name] = product.stock;
     }
   }
+  const totalProduce = produce.map((farm) => {
+    let sumOfProduce = 0;
+    for (const [key, value] of Object.entries(farm))
+      sumOfProduce += value;
+    return sumOfProduce;
+  });
   let currClusterQuantity = {};
   let allClusters = [];
-  let currCluster = [validFarms.length];
+  let currCluster = [[validFarms.length, Infinity]];
 
   for (const crop in requiredProducts) currClusterQuantity[crop] = 0;
 
@@ -103,11 +109,12 @@ module.exports.newOrder = TryCatch(async (req, res, next) => {
     0,
     currClusterQuantity,
     currCluster,
-    allClusters
+    allClusters,
+    totalProduce
   );
-
+  
   let { min_dist, finalPath } = findCluster(distances, allClusters);
-
+  console.log(min_dist,finalPath);
   const finalPathIdx = finalPath;
   finalPath = finalPath.map((idx) => {
     if (idx < validFarms.length) {
@@ -139,12 +146,12 @@ module.exports.newOrder = TryCatch(async (req, res, next) => {
   });
   user.orders.push(order._id);
   await user.save();
-  
+
   for (farmIdx in finalPathIdx) {
     if (finalPathIdx[farmIdx] < validFarms.length) {
       const farm = validFarms[finalPathIdx[farmIdx]];
       const farmProducts = validFarms[finalPathIdx[farmIdx]].products;
-      
+
       let farmOrderItems = [];
       await Promise.all(farmProducts.map(async (productId) => {
         const product = await Product.findById(productId);
@@ -162,9 +169,9 @@ module.exports.newOrder = TryCatch(async (req, res, next) => {
       }));
       if (farmOrderItems.length > 0)
         farm.orders.push({
-        orderId: order._id,
-        orderItems: farmOrderItems,
-      });
+          orderId: order._id,
+          orderItems: farmOrderItems,
+        });
       await farm.save();
     }
   }
@@ -176,6 +183,7 @@ module.exports.newOrder = TryCatch(async (req, res, next) => {
     min_dist,
     paymentID,
   });
+
 });
 
 module.exports.myOrders = TryCatch(async (req, res, next) => {
@@ -195,47 +203,47 @@ module.exports.getPath = TryCatch(async (req, res, next) => {
   return res.status(200).json({
     success: true,
     finalPath: order.finalPath,
-    distance:order.min_dist
+    distance: order.min_dist
   });
 });
 
 module.exports.getAllOrdersOnFarm = TryCatch(async (req, res, next) => {
   const id = req.params.id;
   const farm = await Farm.findById(id);
-  if(!farm) return next(new CustomError("Farm Not Found", 404));
+  if (!farm) return next(new CustomError("Farm Not Found", 404));
 
   return res.status(200).json({
-      success: true,
-      orders: farm.orders
+    success: true,
+    orders: farm.orders
   })
 });
 
-module.exports.getAllOrders = TryCatch(async(req, res, next)=>{
+module.exports.getAllOrders = TryCatch(async (req, res, next) => {
   const orders = await Order.find({});
   const farms = await Farm.find({});
 
 
-  const allOrders = orders.map((order)=>{
+  const allOrders = orders.map((order) => {
     const orderId = order._id;
     const paymentID = order.paymentID;
-    let orderDetails=[];
+    let orderDetails = [];
     let adminRevenue = 0;
-    
-    farms.forEach((farm)=>{
+
+    farms.forEach((farm) => {
       farm.orders.forEach((farmOrder) => {
-        if(String(farmOrder.orderId) === String(orderId)){
-          farmOrder.orderItems.forEach((orderItem)=>{
-            orderDetails.push({name:orderItem.name,price:orderItem.price,quantity:orderItem.quantity,farmUser:farm.user});
+        if (String(farmOrder.orderId) === String(orderId)) {
+          farmOrder.orderItems.forEach((orderItem) => {
+            orderDetails.push({ name: orderItem.name, price: orderItem.price, quantity: orderItem.quantity, farmUser: farm.user });
             adminRevenue += orderItem.price * orderItem.quantity * 0.25;
           })
         }
       });
     });
 
-    
-    return {orderId,paymentID, orderDetails, adminRevenue};
+
+    return { orderId, paymentID, orderDetails, adminRevenue };
   });
-  
+
   return res.status(200).json({
     success: true,
     allOrders

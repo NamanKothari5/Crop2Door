@@ -1,7 +1,7 @@
 module.exports.getCoordinates = async (address, pincode) => {
   const baseURl = process.env.MAPBOX_BASE_URL || 'https://api.mapbox.com';
   const token = process.env.MAPBOX_TOKEN || 'pk.eyJ1IjoibmlzaHRhbiIsImEiOiJja3ZkcGNmZWg0d25wMm5xd2RkcDBzeHVsIn0.irJll1qHLs4XBFONtsVYFA';
-  
+
   const response = await fetch(
     `${baseURl}/geocoding/v5/mapbox.places/${address + "," + pincode
     }.json?limit=1&access_token=${token}`
@@ -13,20 +13,10 @@ module.exports.getCoordinates = async (address, pincode) => {
   } else throw Error("Error retrieving coordinates");
 };
 
-const generateClusters = (
-  required,
-  farms,
-  idx,
-  currClusterQuantity,
-  currCluster,
-  allClusters
-) => {
+const generateClusters = (required, farms, idx, currClusterQuantity, currCluster, allClusters, totalProduce) => {
   if (idx === farms.length) {
     for (const [crop, reqQuantity] of Object.entries(required)) {
-      if (
-        !(crop in currClusterQuantity) ||
-        currClusterQuantity[crop] < reqQuantity
-      )
+      if (!(crop in currClusterQuantity) || currClusterQuantity[crop] < reqQuantity)
         return;
     }
     allClusters.push([...currCluster]);
@@ -35,53 +25,36 @@ const generateClusters = (
 
   let possible = false;
   for (const [crop, reqQuantity] of Object.entries(required)) {
-    if (
-      crop in currClusterQuantity &&
-      currClusterQuantity[crop] === reqQuantity
-    )
+    if (crop in currClusterQuantity && currClusterQuantity[crop] == reqQuantity)
       continue;
-    else if (!(crop in farms[idx])) continue;
+    else if (!(crop in farms[idx]))
+      continue;
     else {
       possible = true;
       break;
     }
   }
 
-  generateClusters(
-    required,
-    farms,
-    idx + 1,
-    { ...currClusterQuantity },
-    [...currCluster],
-    allClusters
-  );
+  generateClusters(required, farms, idx + 1, { ...currClusterQuantity }, [...currCluster], allClusters, totalProduce);
   if (possible) {
+    let quantityPurchased = 0;
     for (const [crop, quantity] of Object.entries(farms[idx])) {
-      if (!(crop in required)) continue;
-      else if (
-        crop in currClusterQuantity &&
-        currClusterQuantity[crop] === required[crop]
-      )
+      if (!(crop in required))
         continue;
+      else if (crop in currClusterQuantity && currClusterQuantity[crop] === required[crop])
+        continue;
+      else if (currClusterQuantity[crop] + quantity <= required[crop])
+        quantityPurchased += quantity, currClusterQuantity[crop] += quantity;
       else {
-        currClusterQuantity[crop] = Math.min(
-          currClusterQuantity[crop] + quantity,
-          required[crop]
-        );
+        quantityPurchased += (required[crop] - currClusterQuantity[crop]), currClusterQuantity[crop] += (required[crop] - currClusterQuantity[crop]);
       }
     }
-    currCluster.push(idx);
-    generateClusters(
-      required,
-      farms,
-      idx + 1,
-      { ...currClusterQuantity },
-      [...currCluster],
-      allClusters
-    );
+    
+    
+    currCluster.push([idx, quantityPurchased / totalProduce[idx]]);
+    generateClusters(required, farms, idx + 1, { ...currClusterQuantity }, [...currCluster], allClusters, totalProduce);
   }
-};
-
+}
 module.exports.generateClusters = generateClusters;
 
 class PriorityQueue {
@@ -122,37 +95,31 @@ module.exports.findCluster = (v, clusters) => {
 
   clusters.forEach((cluster) => {
     const sz = cluster.length;
-    // Creating adjacency list from given distance matrix
     const adj = Array.from({ length: sz }, () => []);
     for (let j = 0; j < sz; j++) {
       for (let k = j + 1; k < sz; k++) {
-        const wt = v[cluster[j]][cluster[k]];
-        const wt2 = v[cluster[k]][cluster[j]];
+        const wt = v[cluster[j][0]][cluster[k][0]];
+        const wt2 = v[cluster[k][0]][cluster[j][0]];
         adj[j].push([k, wt]);
         adj[k].push([j, wt2]);
       }
     }
 
-    // Defining max heap and cost array
     const pq = new PriorityQueue();
     const cost = Array.from({ length: sz }, () => Array(1 << sz).fill(1e9));
 
-    // dl = Index of delivery location
     const dl = 0;
-    // Consider source as all points except for delivery location
     for (let i = 1; i < sz; i++) {
       pq.push([0, i, 1 << i, [i]]);
-      cost[i][1 << i] = 0;
+      cost[i][1 << i] = 1.0/cluster[i][1];
     }
 
-    // This will contain ans of current cluster
     let currAns = Infinity;
     let thisPath = [];
 
     while (!pq.isEmpty()) {
       let [dist, node, mask, path] = pq.pop();
       dist = -1 * dist;
-      // If current node is dl then update the ans
       if (node === dl) {
         if (dist < currAns) {
           currAns = dist;
@@ -160,27 +127,28 @@ module.exports.findCluster = (v, clusters) => {
         }
       }
 
-      // Traverse the unvisited neighbours of current node
       for (const [next, wt] of adj[node]) {
         const nextMask = mask | (1 << next);
         if (next === dl && popcount(nextMask) !== sz) continue;
 
         const currPath = path.concat(next);
-        if (cost[node][mask] + wt < cost[next][nextMask]) {
-          cost[next][nextMask] = cost[node][mask] + wt;
+        if (cost[node][mask] + wt*(1 + 1.0/cluster[next][1]) < cost[next][nextMask]) {
+          cost[next][nextMask] = cost[node][mask] + wt*(1+1.0/cluster[next][1]);
           pq.push([-cost[next][nextMask], next, nextMask, currPath]);
         }
       }
     }
-    /*
-    node->next cost=wt
-    f(next,nextMask,dist)=f(node,mask,dist)+wt(1+(1/proportion of produce sold))
-    */
+    
     if (currAns < res) {
       res = currAns;
-      finalPath = thisPath.map((k) => cluster[k]);
+      finalPath = thisPath.map(k => cluster[k][0]);
     }
   });
+  
+  res=0;
+
+  for(let i=1;i<finalPath.length;i++)
+  res+=v[finalPath[i-1]][finalPath[i]];
 
   return { min_dist: res, finalPath };
 };
