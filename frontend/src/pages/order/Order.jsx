@@ -46,23 +46,21 @@ function Order() {
                   return (
                     <tr>
                       <td class="px-5 py-5 border-b border-green-200 bg-white text-sm">
-                        <div class="flex items-center">
-                          {order.orderItems.map((item) => {
-                            return (
-                              <>
-                                <img
-                                  class="ml-3 w-10 h-10 rounded-full"
-                                  src={productDetails[item.name].imageUrl}
-                                  alt=""
-                                />
-                                <p class="text-gray-900 whitespace-no-wrap ml-3">
-                                  {item.name} ({item.quantity} kg)
-                                </p>
-                              </>
-                            );
-                          })}
-                        </div>
-                      </td>
+                      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                        {order.orderItems.map((item) => (
+                          <div key={item.name} class="flex items-center">
+                            <img
+                              class="w-10 h-10 rounded-full"
+                              src={productDetails[item.name].imageUrl}
+                              alt={item.name}
+                            />
+                            <p class="text-gray-900 whitespace-no-wrap ml-3">
+                              {item.name} ({item.quantity} kg)
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    </td>
                       <td class="px-5 py-5 border-b border-green-200 bg-white text-sm">
                         <p class="text-gray-900 whitespace-no-wrap">
                           {order._id}

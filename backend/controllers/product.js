@@ -55,7 +55,7 @@ module.exports.newProduct = TryCatch(async (req, res, next) => {
 module.exports.getAllProducts = TryCatch(async (req, res, next) => {
     const { userCoordinates } = req.body;
     const allFarms = await Farm.find({});
-
+    
     let query = `${userCoordinates[0]},${userCoordinates[1]}`;
 
     allFarms.forEach((farm) => {
@@ -67,13 +67,14 @@ module.exports.getAllProducts = TryCatch(async (req, res, next) => {
     const token = process.env.MAPBOX_TOKEN;
 
     const response = await fetch(`${baseURl}/directions-matrix/v1/mapbox/driving/${query}?sources=0&annotations=distance,duration&access_token=${token}`);
-
+    
     if (!response.ok)
         return next(new CustomError("Error retreiving appropriate products", 400));
 
     const jsonData = await response.json();
     const distances = jsonData.distances[0];
     
+
     let validFarms = [];
     for (let idx = 1; idx < distances.length; idx++) {
         if (distances[idx] <= 500000)
@@ -85,7 +86,7 @@ module.exports.getAllProducts = TryCatch(async (req, res, next) => {
     const productPromises = validFarms.map(async (farm) => {
         for (const id of farm.products) {
             const product = await Product.findById(id);
-            
+            console.log(product);
             if (product.name in products) {
                 products[product.name].quantity += product.stock;
             } else {

@@ -61,6 +61,7 @@ function Cart() {
         toast.success("Payment Successful");
         const paymentID = response.razorpay_payment_id;
         const res = await newOrder({ id: user._id, paymentID, orderItems: cartItems });
+        console.log(res);
         if ("data" in res) {
           toast.success("Order created successfully");
           dispatch(deleteAllCart());
@@ -76,6 +77,7 @@ function Cart() {
     pay.open();
     // const res = await newOrder({ id: user._id, paymentID:'abc', orderItems: cartItems });
     // if ("data" in res) {
+    //   console.log(res);
     //   toast.success("Order created successfully");
     // }
 

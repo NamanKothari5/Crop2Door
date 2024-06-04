@@ -163,8 +163,13 @@ module.exports.newOrder = TryCatch(async (req, res, next) => {
 
           if(product.stock>0)
           await product.save();
-          else
-          await product.deleteOne();
+          
+          if(product.stock==0){
+            farm.products=farm.products.filter((id )=> {
+              return String(id)!=String(product._id);
+            });
+            await product.deleteOne();
+          }
         
         }
       }));
