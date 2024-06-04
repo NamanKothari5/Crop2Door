@@ -29,7 +29,7 @@ function ProductInfo() {
   const addCart = (products) => {
     console.log(products);
     dispatch(addToCart(products));
-    toast.success("add to cart");
+    toast.success("Added to Cart!");
   };
 
   return (

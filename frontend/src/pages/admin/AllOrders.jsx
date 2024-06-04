@@ -10,6 +10,7 @@ const AllOrders = () => {
 
   useEffect(() => {
     if (data) setOrders(data.allOrders);
+    console.log(data);
   }, [data]);
 
   const TableRows = ({ data }) => {
@@ -67,7 +68,7 @@ const AllOrders = () => {
               className={`px-10 w-fit ${open ? "block" : "hidden"} mx-auto`}
             >
               <thead className="bg-green-100 text-xs font-semibold text-gray-600 uppercase tracking-wider rounded-lg">
-                <th className="py-3 px-4 text-left">Farmer's Name</th>
+                <th className="py-3 px-4 text-left">Farmer's ID</th>
                 <th className="py-3 px-4 text-left">Item Name</th>
                 <th className="py-3 px-4 text-left">Quantity</th>
                 <th className="py-3 px-4 text-left">Total</th>

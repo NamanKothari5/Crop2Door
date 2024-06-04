@@ -70,10 +70,10 @@ function Track() {
                   className="title-font font-medium text-lg text-green-900"
                   style={{ color: mode === "dark" ? "white" : "" }}
                 >
-                  Fresh and Natural Products
+                  Afforadable rates and discounts
                 </h2>
                 <p className="leading-relaxed">
-                  100% natural and healthy crops at your doorstep.
+                  We sell products directly from the farmer.
                 </p>
               </div>
             </div>
@@ -105,10 +105,10 @@ function Track() {
                   className="title-font font-medium text-lg text-green-900"
                   style={{ color: mode === "dark" ? "white" : "" }}
                 >
-                  Fresh and Natural Products
+                  Visibility and Order Tracking
                 </h2>
                 <p className="leading-relaxed">
-                  100% natural and healthy crops at your doorstep.
+                  Our Last Mile delivery supply chain is highly optimized and dynamic.
                 </p>
               </div>
             </div>

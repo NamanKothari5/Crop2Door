@@ -31,6 +31,7 @@ const Map = (props) => {
       mapboxgl.accessToken =
         `${import.meta.env.VITE_APP_MAPBOX_TOKEN}`;
       const initializeMap = async () => {
+        console.log(data);
         const points = data.finalPath;
         const pathDistance=data.distance
         const map = new mapboxgl.Map({
@@ -118,6 +119,7 @@ const Map = (props) => {
         });
         if (showFullPath) {
           map.on('load', () => {
+            console.log(pathDistance);
             const animationDuration = pathDistance;
             const cameraAltitude = 0.5*pathDistance;
             const routeDistance = turf.lineDistance(turf.lineString(path));
@@ -129,7 +131,7 @@ const Map = (props) => {
 
             function frame(time) {
               if (!start) start = time;
-
+              
               const phase = (time - start) / animationDuration;
 
               if (phase > 1) {
@@ -138,7 +140,7 @@ const Map = (props) => {
                   start = 0.0;
                 }, 1500);
               }
-
+              
               const alongRoute = turf.along(
                 turf.lineString(path),
                 routeDistance * phase

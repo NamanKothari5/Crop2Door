@@ -52,7 +52,7 @@ function Cart() {
     var options = {
       key: "rzp_test_uzZGM1K5pSN3tx",
       key_secret: "Oa92GRUpEAtwZkM9GANVsHLS",
-      amount: parseInt(grandTotal * 100),
+      amount: parseInt(grandTotal * 10),
       currency: "INR",
       order_receipt: "order_rcptid_" + user.name,
       name: "Crop2Door",

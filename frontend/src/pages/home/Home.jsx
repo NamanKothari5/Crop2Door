@@ -20,7 +20,6 @@ function Home() {
           </button>
         </Link>
       </div>
-      <Track />
     </Layout>
   );
 }
