@@ -61,5 +61,13 @@ module.exports.users=[
         address:"Thane",
         pincode:"400610",
         role:"admin"
+    },
+    {
+        _id:"HfZ1BJYCD6OjeMhGkQHusrSF6Nm2",
+        name:"NAMAN KOTHARI",
+        email:"codernaman7@gmail.com",
+        address:"Nagpur",
+        pincode:"440001",
+        role:"farmer"
     }
 ]

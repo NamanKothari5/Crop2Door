@@ -4,27 +4,27 @@ module.exports.products=[
         category:"Fruit",
         stock:120,
         userId:"eNfHAIAhXHTiMDseozHZ5Ak8nMI2",
-        price:30
+        price:25
     },{
         name:"Harbara",
         category:"Pulses",
         stock:230,
         userId:"eNfHAIAhXHTiMDseozHZ5Ak8nMI2",
-        price:30
+        price:70
     },
     {
         name:"Brinjal",
         category:"Vegetable",
         stock:320,
         userId:"eNfHAIAhXHTiMDseozHZ5Ak8nMI2",
-        price:30
+        price:46
     },
     {
         name:"Onion",
         category:"Vegetable",
         stock:50,
         userId:"xY8fPvkCnSdYpzpMyT9lyQsI99M2",
-        price:30
+        price:43
     },
     
     {
@@ -32,20 +32,20 @@ module.exports.products=[
         category:"Vegetable",
         stock:310,
         userId: "RQt0WNBiQhNE8XxUMdf6psI7J8E2",
-        price: 30
+        price: 40
     },{
         name:"Cauliflower",
         category:"Vegetable",
         stock:270,
         userId:"RQt0WNBiQhNE8XxUMdf6psI7J8E2",
-        price:30
+        price:35
     },
     {
         name:"Bottle Gourd",
         category:"Vegetable",
         stock:170,
         userId:"RQt0WNBiQhNE8XxUMdf6psI7J8E2",
-        price:30
+        price:41
     },
     {
         name:"Brinjal",
@@ -72,7 +72,7 @@ module.exports.products=[
         category:"Vegetable",
         stock:250,
         userId:"gD0qUXEUWeMsXJa8F77NhdwDWqI2",
-        price:30
+        price:43
     },
     
     {
@@ -80,27 +80,33 @@ module.exports.products=[
         category:"Vegetable",
         stock:220,
         userId:"Solapur",
-        price:30
+        price:45
     },{
         name:"Lady's Finger",
         category:"Vegetable",
         stock:190,
         userId:"Solapur",
-        price:30
+        price:57
     },
     {
         name:"Bottle Gourd",
         category:"Vegetable",
         stock:700,
         userId:"Solapur",
-        price:30
+        price:41
     },
     {
         name:"Harbara",
         category:"Pulses",
         stock:440,
         userId:"LWzbgWnqEFMJkzKH03SN78lZvzo1",
-        price:30
+        price:70
     },
-    
+    {
+        name:"Orange",
+        category:"Fruit",
+        stock:420,
+        userId:"HfZ1BJYCD6OjeMhGkQHusrSF6Nm2",
+        price:70
+    },
 ]

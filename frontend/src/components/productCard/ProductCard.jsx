@@ -61,9 +61,10 @@ function ProductCard() {
 
         <div className="flex flex-wrap -m-4">
           {productNameList.map((item, index) => {
+            console.log(item,productDetails[item]);
             const { quantity } = allProductDetails[item];
             const { imageUrl, price } = productDetails[item];
-
+            
             return (
               <div key={index} className="p-4 md:w-1/4  drop-shadow-lg ">
                 <div

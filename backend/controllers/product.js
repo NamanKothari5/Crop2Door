@@ -86,7 +86,7 @@ module.exports.getAllProducts = TryCatch(async (req, res, next) => {
     const productPromises = validFarms.map(async (farm) => {
         for (const id of farm.products) {
             const product = await Product.findById(id);
-            console.log(product);
+            
             if (product.name in products) {
                 products[product.name].quantity += product.stock;
             } else {
